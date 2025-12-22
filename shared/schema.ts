@@ -1,18 +1,43 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export const sensors = pgTable("sensors", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // e.g., 'Temperature', 'Humidity', 'CO2', 'Camera'
+  location: text("location").notNull(),
+  status: text("status").notNull().default("active"), // 'active', 'inactive', 'maintenance'
+  latitude: real("latitude"),
+  longitude: real("longitude"),
+  lastPing: timestamp("last_ping").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const readings = pgTable("readings", {
+  id: serial("id").primaryKey(),
+  sensorId: integer("sensor_id").notNull(),
+  value: real("value").notNull(),
+  unit: text("unit").notNull(),
+  timestamp: timestamp("timestamp").defaultNow(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const alerts = pgTable("alerts", {
+  id: serial("id").primaryKey(),
+  sensorId: integer("sensor_id"),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  severity: text("severity").notNull(), // 'low', 'medium', 'critical'
+  isResolved: boolean("is_resolved").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSensorSchema = createInsertSchema(sensors).omit({ id: true, lastPing: true });
+export const insertReadingSchema = createInsertSchema(readings).omit({ id: true, timestamp: true });
+export const insertAlertSchema = createInsertSchema(alerts).omit({ id: true, createdAt: true, isResolved: true });
+
+export type Sensor = typeof sensors.$inferSelect;
+export type InsertSensor = z.infer<typeof insertSensorSchema>;
+export type Reading = typeof readings.$inferSelect;
+export type InsertReading = z.infer<typeof insertReadingSchema>;
+export type Alert = typeof alerts.$inferSelect;
+export type InsertAlert = z.infer<typeof insertAlertSchema>;
