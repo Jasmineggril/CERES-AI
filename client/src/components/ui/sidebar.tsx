@@ -383,7 +383,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
+export function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-group"
@@ -699,29 +699,82 @@ function SidebarMenuSubButton({
   )
 }
 
-export {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInput,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuBadge,
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarGroup, 
+  SidebarGroupLabel, 
+  SidebarGroupContent, 
+  SidebarMenu, 
+  SidebarMenuItem, 
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSkeleton,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
+  SidebarInset
+} from "@/components/ui/sidebar";
+import { LayoutDashboard, Flame, ShieldAlert, Settings } from "lucide-react";
+import { Link, useLocation } from "wouter";
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+
+  return (
+    <SidebarProvider defaultOpen={true}>
+      {/* Aqui definimos o visual da barra lateral */}
+      <Sidebar variant="sidebar" collapsible="icon" className="border-r border-emerald-100">
+        <SidebarContent className="bg-emerald-950 text-white">
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-emerald-400/70 font-bold uppercase tracking-widest text-[10px] py-4">
+              FlorestaÍ - Monitoramento
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location === "/"} className="hover:bg-emerald-900 transition-colors">
+                    <Link href="/" className="flex items-center gap-3">
+                      <LayoutDashboard className="w-5 h-5" />
+                      <span className="font-medium">Centro de Comando</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location === "/denuncia"} className="hover:bg-emerald-900 transition-colors">
+                    <Link href="/denuncia" className="flex items-center gap-3">
+                      <Flame className="w-5 h-5 text-orange-500" />
+                      <span className="font-medium">Reportar Foco</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location === "/alerts"} className="hover:bg-emerald-900 transition-colors">
+                    <Link href="/alerts" className="flex items-center gap-3">
+                      <ShieldAlert className="w-5 h-5" />
+                      <span className="font-medium">Alertas Ativos</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+
+      {/* SidebarInset é o que faz o conteúdo principal "empurrar" quando a sidebar abre */}
+      <SidebarInset className="bg-slate-50">
+        <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b border-emerald-100 bg-white">
+          <SidebarTrigger className="-ml-1 text-emerald-900" />
+          <div className="h-4 w-[1px] bg-emerald-100 mx-2" />
+          <span className="text-sm font-bold text-emerald-900 uppercase tracking-tighter">Operacional</span>
+        </header>
+
+        <main className="flex-1 p-6 overflow-auto">
+          {children}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }

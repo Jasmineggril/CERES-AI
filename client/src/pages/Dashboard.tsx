@@ -3,10 +3,27 @@ import { Layout } from "@/components/Layout";
 import { StatCard } from "@/components/StatCard";
 import { useSensors } from "@/hooks/use-sensors";
 import { useAlerts } from "@/hooks/use-alerts";
-import { Activity, Thermometer, AlertTriangle, Wind, MapPin, Leaf, FileText } from "lucide-react";
+import { Activity, Thermometer, AlertTriangle, Wind, MapPin, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
+// Placeholder para Mapa
+function MapPlaceholder() {
+  return (
+    <div className="w-full h-[400px] rounded-2xl bg-gradient-to-br from-emerald-900 to-emerald-700 border border-emerald-100 shadow-lg flex items-center justify-center overflow-hidden relative">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-orange-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-red-600 rounded-full blur-3xl"></div>
+      </div>
+      <div className="text-center text-white z-10">
+        <MapPin className="w-12 h-12 mx-auto mb-2 opacity-70" />
+        <p className="text-sm font-medium">Mapa Geolocalização - Cerrado Central</p>
+        <p className="text-xs opacity-70 mt-1">Integração de Mapa em Desenvolvimento</p>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { data: sensors, isLoading: loadingSensors } = useSensors();
@@ -25,79 +42,53 @@ export default function Dashboard() {
     { month: "Jan 2025", focos: 85000 }
   ];
 
-  // Função para imprimir o relatório profissional
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const MapPlaceholder = () => (
-    <div className="w-full h-[400px] bg-slate-900 rounded-2xl border border-emerald-900 relative overflow-hidden group shadow-2xl">
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,_#10b981_1px,_transparent_1px)] bg-[size:20px_20px]" />
-
-      {/* Marcadores de Fogo Reais (Simulados no Cerrado) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative">
-          <div className="w-6 h-6 bg-red-600 rounded-full animate-ping opacity-75" />
-          <div className="absolute inset-0 w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg" />
-        </div>
-      </div>
-
-      <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur px-4 py-2 rounded-xl border border-emerald-500/30 text-xs font-medium text-emerald-400">
-        Monitoramento Cerrado • Operacional
-      </div>
-    </div>
-  );
+  const handlePrint = () => window.print();
 
   return (
     <Layout>
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-display text-foreground">FlorestaÍ - Centro de Comando</h1>
-          <p className="text-muted-foreground mt-2">Inteligência Preditiva e Monitoramento de Queimadas no Cerrado.</p>
+          <h1 className="text-3xl font-bold font-display text-foreground">FlorestaI - Painel de Monitoramento</h1>
+          <p className="text-muted-foreground mt-2 font-medium">Análise Preditiva de Focos no Cerrado Brasileiro</p>
         </div>
         <button 
           onClick={handlePrint}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/20"
+          className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg"
         >
           <FileText className="w-5 h-5" />
-          Gerar Relatório de Impacto
+          Gerar Relatório
         </button>
       </header>
 
-      {/* Stats Grid com seus dados reais */}
+      {/* Grid de Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
-          title="Focos Detectados (2024)"
+          title="Focos 2024"
           value="81.468"
-          icon={<Activity className="w-6 h-6 text-orange-500" />}
+          icon={<Activity className="w-6 h-6" />}
           trend="+40% vs 2023"
           trendUp={true}
-          delay={0}
         />
         <StatCard
-          title="Risco IA (2025)"
-          value="CRÍTICO (85%)"
-          icon={<AlertTriangle className="w-6 h-6 text-red-500" />}
-          trend="Tendência de Alta"
+          title="Risco 2025"
+          value="CRÍTICO"
+          icon={<AlertTriangle className="w-6 h-6" />}
+          trend="85% de probabilidade"
           trendUp={true}
-          delay={100}
         />
         <StatCard
-          title="Projeção 2025 (Focos)"
+          title="Projeção IA"
           value="~85.000"
-          icon={<Thermometer className="w-6 h-6 text-rose-500" />}
-          trend="IA Regression"
+          icon={<Thermometer className="w-6 h-6" />}
+          trend="Focos estimados"
           trendUp={true}
-          delay={200}
         />
         <StatCard
-          title="Denúncias Ativas"
+          title="Alertas Ativos"
           value={loadingAlerts ? "..." : criticalAlerts}
-          icon={<MapPin className="w-6 h-6 text-blue-500" />}
-          className={criticalAlerts > 0 ? "border-rose-200 bg-rose-50" : ""}
-          trend={criticalAlerts > 0 ? "Ação Requerida" : "Monitorando"}
+          icon={<MapPin className="w-6 h-6" />}
+          trend={criticalAlerts > 0 ? "Ação requerida" : "Estável"}
           trendUp={criticalAlerts === 0}
-          delay={300}
         />
       </div>
 
@@ -138,8 +129,8 @@ export default function Dashboard() {
 
         <div className="bg-card rounded-2xl border border-border/50 p-6 h-full shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold font-display text-red-700">Denúncias (Supabase)</h2>
-            <Link href="/alerts" className="text-sm text-primary hover:underline font-medium">
+            <h2 className="text-xl font-bold font-display">Alertas Críticos</h2>
+            <Link href="/alerts" className="text-primary hover:underline text-sm font-medium">
               Ver Histórico
             </Link>
           </div>
