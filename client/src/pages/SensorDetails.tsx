@@ -38,12 +38,12 @@ export default function SensorDetails() {
 
   if (!sensor) return <Layout><div>Sensor não encontrado</div></Layout>;
 
-  // Format data for chart
+  // Formatar dados para gráfico
   const chartData = readings?.map(r => ({
     time: format(new Date(r.timestamp || new Date()), 'HH:mm'),
     value: r.value,
     fullDate: r.timestamp
-  })).reverse() || []; // Assuming API returns newest first
+  })).reverse() || []; // Assumindo que a API retorna os mais recentes primeiro
 
   return (
     <Layout>
@@ -61,7 +61,7 @@ export default function SensorDetails() {
                 <MapPin className="w-4 h-4" /> {sensor.location}
               </span>
               <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" /> Última atualização: {sensor.lastPing ? format(new Date(sensor.lastPing), 'd MMM, HH:mm') : 'N/A'}
+                <Clock className="w-4 h-4" /> Última atualização: {sensor.lastPing ? format(new Date(sensor.lastPing), 'd MMM, HH:mm') : 'Nunca'}
               </span>
             </div>
           </div>

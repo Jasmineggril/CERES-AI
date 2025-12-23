@@ -15,7 +15,7 @@ export function SensorForm({ onSuccess, onCancel }: SensorFormProps) {
     resolver: zodResolver(insertSensorSchema),
     defaultValues: {
       status: "active",
-      type: "Temperature",
+      type: "Temperatura",
     }
   });
 
@@ -30,33 +30,33 @@ export function SensorForm({ onSuccess, onCancel }: SensorFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold font-display">Add New Sensor</h2>
+        <h2 className="text-xl font-bold font-display">Adicionar Novo Sensor</h2>
         <button type="button" onClick={onCancel} className="text-muted-foreground hover:text-foreground">
           <X className="w-5 h-5" />
         </button>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Sensor Name</label>
+        <label className="text-sm font-medium">Nome do Sensor</label>
         <input
           {...register("name")}
           className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-          placeholder="e.g. North Forest Unit 1"
+          placeholder="ex. Unidade Floresta Norte 1"
         />
         {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Type</label>
+          <label className="text-sm font-medium">Tipo</label>
           <select
             {...register("type")}
             className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
           >
-            <option value="Temperature">Temperature</option>
-            <option value="Humidity">Humidity</option>
+            <option value="Temperatura">Temperatura</option>
+            <option value="Umidade">Umidade</option>
             <option value="CO2">CO2</option>
-            <option value="Camera">Camera</option>
+            <option value="Câmera">Câmera</option>
           </select>
         </div>
 
@@ -66,19 +66,19 @@ export function SensorForm({ onSuccess, onCancel }: SensorFormProps) {
             {...register("status")}
             className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
           >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="maintenance">Maintenance</option>
+            <option value="active">Ativo</option>
+            <option value="inactive">Inativo</option>
+            <option value="maintenance">Manutenção</option>
           </select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Location Description</label>
+        <label className="text-sm font-medium">Descrição da Localização</label>
         <input
           {...register("location")}
           className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-          placeholder="e.g. Zone A, Tree 42"
+          placeholder="ex. Zona A, Árvore 42"
         />
         {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
       </div>
@@ -108,10 +108,10 @@ export function SensorForm({ onSuccess, onCancel }: SensorFormProps) {
 
       <div className="pt-4 flex gap-3">
         <Button type="button" variant="ghost" onClick={onCancel} className="flex-1">
-          Cancel
+          Cancelar
         </Button>
         <Button type="submit" isLoading={createSensor.isPending} className="flex-1">
-          Create Sensor
+          Criar Sensor
         </Button>
       </div>
     </form>

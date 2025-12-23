@@ -31,15 +31,15 @@ export default function Dashboard() {
 
   const criticalAlerts = alerts?.filter(a => a.severity === 'critical' && !a.isResolved).length || 0;
 
-  // Trend data for IA 2025 projection
+  // Dados de tendência para projeção IA 2025
   const trendData = [
-    { month: "Jan 2024", focos: 6789 },
-    { month: "Mar 2024", focos: 12450 },
-    { month: "May 2024", focos: 20340 },
-    { month: "Jul 2024", focos: 35680 },
-    { month: "Sep 2024", focos: 56890 },
-    { month: "Nov 2024", focos: 81468 },
-    { month: "Jan 2025", focos: 85000 }
+    { month: "Jan 24", focos: 6789 },
+    { month: "Mar 24", focos: 12450 },
+    { month: "Mai 24", focos: 20340 },
+    { month: "Jul 24", focos: 35680 },
+    { month: "Set 24", focos: 56890 },
+    { month: "Nov 24", focos: 81468 },
+    { month: "Jan 25", focos: 85000 }
   ];
 
   const handlePrint = () => window.print();
@@ -94,7 +94,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          {/* Trend Chart */}
+          {/* Gráfico de Tendência */}
           <div className="bg-card rounded-2xl border border-border/50 p-6 shadow-sm">
             <h2 className="text-xl font-bold font-display mb-4">Tendência IA 2025 (Focos Projetados)</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -119,10 +119,10 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Map */}
+          {/* Mapa */}
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold font-display">Mapa Operacional de Calor</h2>
-            <button className="text-primary hover:underline text-sm font-medium">Ver Mapa em Tela Cheia</button>
+            <button className="text-primary hover:underline text-sm font-medium">Tela Cheia</button>
           </div>
           <MapPlaceholder />
         </div>
