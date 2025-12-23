@@ -3,7 +3,6 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import { fetchWeatherData, assessFireRisk } from "./weather-service";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -96,45 +95,6 @@ export async function registerRoutes(
     const alert = await storage.resolveAlert(Number(req.params.id));
     if (!alert) return res.status(404).json({ message: "Alert not found" });
     res.json(alert);
-  });
-
-  // Weather
-  app.post(api.weather.fetch.path, async (req, res) => {
-    try {
-      const input = api.weather.fetch.input.parse(req.body);
-      const weatherData = await fetchWeatherData(input.latitude, input.longitude);
-      
-      if (!weatherData) {
-        return res.status(400).json({ message: "Falha ao buscar dados de previsão" });
-      }
-
-      // Assess fire risk
-      const { riskLevel, factors } = assessFireRisk(weatherData);
-      
-      // Store in database
-      const stored = await storage.createWeatherData(weatherData);
-      
-      // Create alert if risk is high
-      if (riskLevel === "critical" || riskLevel === "high") {
-        await storage.createAlert({
-          title: `Risco de Fogo ${riskLevel.toUpperCase()}`,
-          message: `Condições meteorológicas desfavoráveis: ${factors.join(", ")}`,
-          severity: riskLevel === "critical" ? "critical" : "medium"
-        });
-      }
-
-      res.status(201).json(stored);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        return res.status(400).json({ message: err.errors[0].message });
-      }
-      throw err;
-    }
-  });
-
-  app.get(api.weather.latest.path, async (req, res) => {
-    const latest = await storage.getLatestWeather();
-    res.json(latest || null);
   });
 
   await seedDatabase();
