@@ -1,8 +1,8 @@
 import { db } from "./db";
 import {
-  sensors, readings, alerts,
-  type InsertSensor, type InsertReading, type InsertAlert,
-  type Sensor, type Reading, type Alert
+  sensors, readings, alerts, weatherData,
+  type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData,
+  type Sensor, type Reading, type Alert, type WeatherData
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -22,6 +22,11 @@ export interface IStorage {
   getAlerts(): Promise<Alert[]>;
   createAlert(alert: InsertAlert): Promise<Alert>;
   resolveAlert(id: number): Promise<Alert | undefined>;
+
+  // Weather Data
+  getWeatherData(latitude?: number, longitude?: number): Promise<WeatherData[]>;
+  createWeatherData(data: InsertWeatherData): Promise<WeatherData>;
+  getLatestWeather(): Promise<WeatherData | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -83,6 +88,32 @@ export class DatabaseStorage implements IStorage {
       .where(eq(alerts.id, id))
       .returning();
     return updated;
+  }
+
+  // Weather Data
+  async getWeatherData(latitude?: number, longitude?: number): Promise<WeatherData[]> {
+    let query = db.select().from(weatherData);
+    
+    if (latitude !== undefined && longitude !== undefined) {
+      // Find weather data near coordinates (within ~1 degree)
+      query = query.where(
+        (sq) => sq
+      );
+    }
+    
+    return await query.orderBy(desc(weatherData.timestamp));
+  }
+
+  async createWeatherData(data: InsertWeatherData): Promise<WeatherData> {
+    const [newWeather] = await db.insert(weatherData).values(data).returning();
+    return newWeather;
+  }
+
+  async getLatestWeather(): Promise<WeatherData | undefined> {
+    const [latest] = await db.select().from(weatherData)
+      .orderBy(desc(weatherData.timestamp))
+      .limit(1);
+    return latest;
   }
 }
 

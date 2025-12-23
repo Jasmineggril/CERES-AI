@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertSensorSchema, insertReadingSchema, insertAlertSchema, sensors, readings, alerts } from './schema';
+import { insertSensorSchema, insertReadingSchema, insertAlertSchema, insertWeatherSchema, sensors, readings, alerts, weatherData } from './schema';
 
 export const errorSchemas = {
   validation: z.object({ message: z.string(), field: z.string().optional() }),
@@ -76,6 +76,19 @@ export const api = {
       method: 'PATCH' as const,
       path: '/api/alerts/:id/resolve',
       responses: { 200: z.custom<typeof alerts.$inferSelect>() },
+    },
+  },
+  weather: {
+    fetch: {
+      method: 'POST' as const,
+      path: '/api/weather/fetch',
+      input: z.object({ latitude: z.number(), longitude: z.number() }),
+      responses: { 201: z.custom<typeof weatherData.$inferSelect>() },
+    },
+    latest: {
+      method: 'GET' as const,
+      path: '/api/weather/latest',
+      responses: { 200: z.custom<typeof weatherData.$inferSelect>().nullable() },
     },
   }
 };

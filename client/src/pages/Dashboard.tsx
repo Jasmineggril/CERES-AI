@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { Layout } from "@/components/Layout";
 import { StatCard } from "@/components/StatCard";
+import { WeatherCard } from "@/components/WeatherCard";
 import { useSensors } from "@/hooks/use-sensors";
 import { useAlerts } from "@/hooks/use-alerts";
+import { useWeatherLatest, useFetchWeather } from "@/hooks/use-weather";
 import { Activity, Thermometer, AlertTriangle, Wind, MapPin, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useEffect } from "react";
 
 // Placeholder para Mapa
 function MapPlaceholder() {
@@ -28,8 +31,15 @@ function MapPlaceholder() {
 export default function Dashboard() {
   const { data: sensors, isLoading: loadingSensors } = useSensors();
   const { data: alerts, isLoading: loadingAlerts } = useAlerts();
+  const { data: weatherData, isLoading: loadingWeather } = useWeatherLatest();
+  const fetchWeather = useFetchWeather();
 
   const criticalAlerts = alerts?.filter(a => a.severity === 'critical' && !a.isResolved).length || 0;
+
+  // Fetch weather for Cerrado region on mount
+  useEffect(() => {
+    fetchWeather.mutate({ latitude: -15.7942, longitude: -47.8822 });
+  }, []);
 
   // Dados de tendência para projeção IA 2025
   const trendData = [
@@ -118,6 +128,9 @@ export default function Dashboard() {
               </LineChart>
             </ResponsiveContainer>
           </div>
+
+          {/* Weather Integration */}
+          <WeatherCard data={weatherData} isLoading={loadingWeather} />
 
           {/* Mapa */}
           <div className="flex items-center justify-between">
