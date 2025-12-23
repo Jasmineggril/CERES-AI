@@ -1,12 +1,16 @@
 import { db } from "./db";
 import {
-  sensors, readings, alerts, weatherData,
-  type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData,
-  type Sensor, type Reading, type Alert, type WeatherData
+  users, sensors, readings, alerts, weatherData,
+  type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData, type InsertUser,
+  type Sensor, type Reading, type Alert, type WeatherData, type User
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
+  // Users
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+
   // Sensors
   getSensors(): Promise<Sensor[]>;
   getSensor(id: number): Promise<Sensor | undefined>;
@@ -30,6 +34,17 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Users
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db.insert(users).values(user).returning();
+    return newUser;
+  }
+
   // Sensors
   async getSensors(): Promise<Sensor[]> {
     return await db.select().from(sensors).orderBy(sensors.id);

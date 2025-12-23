@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertSensorSchema, insertReadingSchema, insertAlertSchema, insertWeatherSchema, sensors, readings, alerts, weatherData } from './schema';
+import { insertUserSchema, insertSensorSchema, insertReadingSchema, insertAlertSchema, insertWeatherSchema, users, sensors, readings, alerts, weatherData } from './schema';
 
 export const errorSchemas = {
   validation: z.object({ message: z.string(), field: z.string().optional() }),
@@ -8,6 +8,30 @@ export const errorSchemas = {
 };
 
 export const api = {
+  auth: {
+    login: {
+      method: 'POST' as const,
+      path: '/api/auth/login',
+      input: z.object({ email: z.string(), password: z.string() }),
+      responses: { 200: z.object({ id: z.number(), email: z.string(), name: z.string() }) },
+    },
+    signup: {
+      method: 'POST' as const,
+      path: '/api/auth/signup',
+      input: insertUserSchema,
+      responses: { 201: z.custom<typeof users.$inferSelect>() },
+    },
+    logout: {
+      method: 'POST' as const,
+      path: '/api/auth/logout',
+      responses: { 200: z.void() },
+    },
+    status: {
+      method: 'GET' as const,
+      path: '/api/auth/status',
+      responses: { 200: z.object({ userId: z.number(), email: z.string(), name: z.string() }) },
+    },
+  },
   sensors: {
     list: {
       method: 'GET' as const,

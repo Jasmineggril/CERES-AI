@@ -7,6 +7,8 @@ import { Activity, Thermometer, AlertTriangle, Wind, MapPin, FileText } from "lu
 import { format } from "date-fns";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Placeholder para Mapa
 function MapPlaceholder() {
@@ -28,6 +30,20 @@ function MapPlaceholder() {
 export default function Dashboard() {
   const { data: sensors, isLoading: loadingSensors } = useSensors();
   const { data: alerts, isLoading: loadingAlerts } = useAlerts();
+  const { toast } = useToast();
+
+  // Real-time notifications
+  useEffect(() => {
+    if (isLoading || !alerts) return;
+    const criticalAlert = alerts.find(a => a.severity === 'critical' && !a.isResolved);
+    if (criticalAlert) {
+      toast({
+        title: criticalAlert.title,
+        description: criticalAlert.message,
+        variant: "destructive",
+      });
+    }
+  }, [alerts, isLoading, toast]);
 
   const criticalAlerts = alerts?.filter(a => a.severity === 'critical' && !a.isResolved).length || 0;
 

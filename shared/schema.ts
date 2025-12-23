@@ -2,6 +2,15 @@ import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzl
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  name: text("name").notNull(),
+  role: text("role").default("user"), // 'user', 'admin'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const sensors = pgTable("sensors", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -46,11 +55,14 @@ export const weatherData = pgTable("weather_data", {
   timestamp: timestamp("timestamp").defaultNow(),
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, role: true });
 export const insertSensorSchema = createInsertSchema(sensors).omit({ id: true, lastPing: true });
 export const insertReadingSchema = createInsertSchema(readings).omit({ id: true, timestamp: true });
 export const insertAlertSchema = createInsertSchema(alerts).omit({ id: true, createdAt: true, isResolved: true });
 export const insertWeatherSchema = createInsertSchema(weatherData).omit({ id: true, timestamp: true });
 
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Sensor = typeof sensors.$inferSelect;
 export type InsertSensor = z.infer<typeof insertSensorSchema>;
 export type Reading = typeof readings.$inferSelect;

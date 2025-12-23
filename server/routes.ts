@@ -3,11 +3,72 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import crypto from "crypto";
+
+function hashPassword(password: string): string {
+  return crypto.createHash("sha256").update(password).digest("hex");
+}
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Auth
+  app.post(api.auth.signup.path, async (req, res) => {
+    try {
+      const input = api.auth.signup.input.parse(req.body);
+      const existing = await storage.getUserByEmail(input.email);
+      if (existing) {
+        return res.status(400).json({ message: "Email já cadastrado" });
+      }
+
+      const user = await storage.createUser({
+        ...input,
+        password: hashPassword(input.password),
+      });
+
+      (req as any).session = { userId: user.id, email: user.email, name: user.name };
+      res.status(201).json({ id: user.id, email: user.email, name: user.name });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
+  app.post(api.auth.login.path, async (req, res) => {
+    try {
+      const input = api.auth.login.input.parse(req.body);
+      const user = await storage.getUserByEmail(input.email);
+      
+      if (!user || user.password !== hashPassword(input.password)) {
+        return res.status(401).json({ message: "Email ou senha inválidos" });
+      }
+
+      (req as any).session = { userId: user.id, email: user.email, name: user.name };
+      res.json({ id: user.id, email: user.email, name: user.name });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
+  app.post(api.auth.logout.path, (req, res) => {
+    (req as any).session = null;
+    res.json({});
+  });
+
+  app.get("/api/auth/status", (req, res) => {
+    if ((req as any).session) {
+      res.json((req as any).session);
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
+    }
+  });
+
   // Sensors
   app.get(api.sensors.list.path, async (req, res) => {
     const sensors = await storage.getSensors();
