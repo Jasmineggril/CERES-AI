@@ -10,10 +10,10 @@ export function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
 
   const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-    { icon: Radio, label: "Sensors", href: "/sensors" },
-    { icon: Bell, label: "Alerts", href: "/alerts" },
-    { icon: Settings, label: "Settings", href: "/settings" },
+    { icon: LayoutDashboard, label: "Painel", href: "/" },
+    { icon: Radio, label: "Sensores", href: "/sensors" },
+    { icon: Bell, label: "Alertas", href: "/alerts" },
+    { icon: Settings, label: "Configurações", href: "/settings" },
   ];
 
   return (
@@ -26,7 +26,7 @@ export function Layout({ children }: LayoutProps) {
           </div>
           <div>
             <h1 className="font-display font-bold text-xl leading-none tracking-tight">FlorestaI</h1>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">Eco Monitoring</p>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">Monitoramento Ambiental</p>
           </div>
         </div>
 
@@ -62,12 +62,12 @@ export function Layout({ children }: LayoutProps) {
         <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-semibold text-primary">System Online</span>
+            <span className="text-xs font-semibold text-primary">Sistema Online</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Monitoring 12 active zones.
+            Monitorando 12 zonas ativas.
             <br />
-            Last sync: Just now
+            Última sincronização: Agora mesmo
           </p>
         </div>
       </aside>

@@ -29,8 +29,8 @@ export default function Alerts() {
     <Layout>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display text-foreground">Alerts</h1>
-          <p className="text-muted-foreground mt-1">System notifications and critical warnings.</p>
+          <h1 className="text-3xl font-bold font-display text-foreground">Alertas</h1>
+          <p className="text-muted-foreground mt-1">Notificações do sistema e avisos críticos.</p>
         </div>
       </div>
 
@@ -55,13 +55,13 @@ export default function Alerts() {
                     <h3 className="font-bold text-foreground text-lg">{alert.title}</h3>
                     {alert.isResolved && (
                       <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium border border-emerald-200">
-                        Resolved
+                        Resolvido
                       </span>
                     )}
                   </div>
                   <p className="text-muted-foreground mt-1">{alert.message}</p>
                   <p className="text-xs text-muted-foreground/60 mt-2">
-                    Reported: {alert.createdAt ? format(new Date(alert.createdAt), 'MMM d, yyyy @ h:mm a') : 'Unknown'}
+                    Reportado em: {alert.createdAt ? format(new Date(alert.createdAt), 'd MMM, yyyy @ HH:mm') : 'Desconhecido'}
                   </p>
                 </div>
               </div>
@@ -74,7 +74,7 @@ export default function Alerts() {
                   className="shrink-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  Mark Resolved
+                  Marcar como Resolvido
                 </Button>
               )}
             </div>
@@ -84,8 +84,8 @@ export default function Alerts() {
         {alerts?.length === 0 && (
           <div className="text-center py-12 bg-card rounded-2xl border border-dashed border-border">
             <CheckCircle className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-muted-foreground">No alerts found</h3>
-            <p className="text-sm text-muted-foreground/70">Everything seems to be running smoothly.</p>
+            <h3 className="text-lg font-bold text-muted-foreground">Nenhum alerta encontrado</h3>
+            <p className="text-sm text-muted-foreground/70">Tudo parece estar funcionando normalmente.</p>
           </div>
         )}
       </div>

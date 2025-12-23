@@ -16,7 +16,7 @@ function Router() {
       <Route path="/sensors" component={Sensors} />
       <Route path="/sensors/:id" component={SensorDetails} />
       <Route path="/alerts" component={Alerts} />
-      <Route path="/settings" component={() => <div className="p-8 text-center text-muted-foreground">Settings Page Placeholder</div>} />
+      <Route path="/settings" component={() => <div className="p-8 text-center text-muted-foreground">Página de Configurações em Desenvolvimento</div>} />
       <Route component={NotFound} />
     </Switch>
   );

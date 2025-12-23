@@ -23,15 +23,15 @@ export default function Sensors() {
     <Layout>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-display text-foreground">Sensors</h1>
-          <p className="text-muted-foreground mt-1">Manage and monitor your deployed sensor units.</p>
+          <h1 className="text-3xl font-bold font-display text-foreground">Sensores</h1>
+          <p className="text-muted-foreground mt-1">Gerencie e monitore suas unidades de sensores implantadas.</p>
         </div>
         
         <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
           <Dialog.Trigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Deploy Sensor
+              Implantar Sensor
             </Button>
           </Dialog.Trigger>
           <Dialog.Portal>
@@ -49,7 +49,7 @@ export default function Sensors() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input 
             type="text"
-            placeholder="Search sensors by name or location..."
+            placeholder="Buscar sensores por nome ou local..."
             className="w-full pl-10 pr-4 py-2 rounded-lg bg-secondary/30 border-transparent focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-sm"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -57,7 +57,7 @@ export default function Sensors() {
         </div>
         <Button variant="outline" size="sm" className="hidden sm:flex">
           <Filter className="w-4 h-4 mr-2" />
-          Filter
+          Filtrar
         </Button>
       </div>
 
@@ -79,7 +79,7 @@ export default function Sensors() {
                  <button 
                   onClick={(e) => {
                     e.preventDefault();
-                    if(confirm("Are you sure?")) deleteSensor.mutate(sensor.id);
+                    if(confirm("Tem certeza?")) deleteSensor.mutate(sensor.id);
                   }}
                   className="p-2 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100"
                 >
@@ -115,10 +115,10 @@ export default function Sensors() {
                           ? 'bg-emerald-100 text-emerald-700' 
                           : 'bg-amber-100 text-amber-700'
                       }`}>
-                        {sensor.status}
+                        {sensor.status === 'active' ? 'Ativo' : 'Inativo'}
                       </span>
                       <span className="text-muted-foreground">
-                        Last ping: {sensor.lastPing ? format(new Date(sensor.lastPing), 'HH:mm') : 'Never'}
+                        Último contato: {sensor.lastPing ? format(new Date(sensor.lastPing), 'HH:mm') : 'Nunca'}
                       </span>
                     </div>
                   </div>

@@ -36,7 +36,7 @@ export default function SensorDetails() {
     );
   }
 
-  if (!sensor) return <Layout><div>Sensor not found</div></Layout>;
+  if (!sensor) return <Layout><div>Sensor não encontrado</div></Layout>;
 
   // Format data for chart
   const chartData = readings?.map(r => ({
@@ -50,7 +50,7 @@ export default function SensorDetails() {
       <div className="mb-6">
         <Link href="/sensors" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to Sensors
+          Voltar para Sensores
         </Link>
         
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -61,7 +61,7 @@ export default function SensorDetails() {
                 <MapPin className="w-4 h-4" /> {sensor.location}
               </span>
               <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" /> Last update: {sensor.lastPing ? format(new Date(sensor.lastPing), 'MMM d, HH:mm') : 'N/A'}
+                <Clock className="w-4 h-4" /> Última atualização: {sensor.lastPing ? format(new Date(sensor.lastPing), 'd MMM, HH:mm') : 'N/A'}
               </span>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function SensorDetails() {
           <div className="flex gap-2">
             <Button variant="outline">
               <Download className="w-4 h-4 mr-2" />
-              Export Data
+              Exportar Dados
             </Button>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function SensorDetails() {
       {/* Main Chart */}
       <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm mb-8">
         <div className="mb-6">
-          <h2 className="text-lg font-bold font-display">Historical Readings ({sensor.type})</h2>
+          <h2 className="text-lg font-bold font-display">Leituras Históricas ({sensor.type})</h2>
         </div>
         
         <div className="h-[400px] w-full">
@@ -129,7 +129,7 @@ export default function SensorDetails() {
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card p-6 rounded-2xl border border-border/50">
-          <h3 className="text-sm font-medium text-muted-foreground mb-1">Average</h3>
+          <h3 className="text-sm font-medium text-muted-foreground mb-1">Média</h3>
           <p className="text-2xl font-bold text-foreground">
             {chartData.length > 0 
               ? (chartData.reduce((acc, curr) => acc + curr.value, 0) / chartData.length).toFixed(1)
@@ -139,14 +139,14 @@ export default function SensorDetails() {
           </p>
         </div>
         <div className="bg-card p-6 rounded-2xl border border-border/50">
-          <h3 className="text-sm font-medium text-muted-foreground mb-1">Max Recorded</h3>
+          <h3 className="text-sm font-medium text-muted-foreground mb-1">Máximo Registrado</h3>
           <p className="text-2xl font-bold text-foreground">
             {chartData.length > 0 ? Math.max(...chartData.map(d => d.value)).toFixed(1) : 0}
             <span className="text-sm font-normal text-muted-foreground ml-1">{readings?.[0]?.unit}</span>
           </p>
         </div>
         <div className="bg-card p-6 rounded-2xl border border-border/50">
-          <h3 className="text-sm font-medium text-muted-foreground mb-1">Min Recorded</h3>
+          <h3 className="text-sm font-medium text-muted-foreground mb-1">Mínimo Registrado</h3>
           <p className="text-2xl font-bold text-foreground">
             {chartData.length > 0 ? Math.min(...chartData.map(d => d.value)).toFixed(1) : 0}
             <span className="text-sm font-normal text-muted-foreground ml-1">{readings?.[0]?.unit}</span>
