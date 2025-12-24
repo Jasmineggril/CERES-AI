@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   // Real-time notifications
   useEffect(() => {
-    if (isLoading || !alerts) return;
+    if (loadingAlerts || !alerts) return;
     const criticalAlert = alerts.find(a => a.severity === 'critical' && !a.isResolved);
     if (criticalAlert) {
       toast({
@@ -43,7 +43,7 @@ export default function Dashboard() {
         variant: "destructive",
       });
     }
-  }, [alerts, isLoading, toast]);
+  }, [alerts, loadingAlerts, toast]);
 
   const criticalAlerts = alerts?.filter(a => a.severity === 'critical' && !a.isResolved).length || 0;
 
