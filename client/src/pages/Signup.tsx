@@ -54,7 +54,7 @@ export default function Signup() {
               <Leaf className="w-6 h-6 text-white" />
             </div>
             <div className="ml-3">
-              <h1 className="font-display font-bold text-2xl">FlorestaI</h1>
+              <h1 className="font-display font-bold text-2xl">FlorestAI</h1>
             </div>
           </div>
 

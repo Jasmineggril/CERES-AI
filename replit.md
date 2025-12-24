@@ -1,8 +1,8 @@
-# FlorestaI - Environmental Monitoring System
+# FlorestAI - Environmental Monitoring System
 
 ## Overview
 
-FlorestaI is a full-stack environmental monitoring application designed for the Brazilian Cerrado biome. It provides real-time sensor data tracking, weather monitoring, and fire alert management for forest conservation efforts. The application features a React frontend with a nature-inspired UI theme and an Express backend with PostgreSQL database storage.
+FlorestAI is a full-stack environmental monitoring application designed for the Brazilian Cerrado biome. It provides real-time sensor data tracking, weather monitoring, and fire alert management for forest conservation efforts. The application features a React frontend with a nature-inspired UI theme and an Express backend with PostgreSQL database storage.
 
 ## User Preferences
 
