@@ -86,7 +86,7 @@ export default function Reports() {
               <label className="block text-sm font-medium mb-2">Status</label>
               <select
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                onChange={(e) => setFilterStatus(e.target.value as FilterStatusType)}
                 className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:ring-2 focus:ring-primary/20 outline-none"
                 data-testid="select-status"
               >
