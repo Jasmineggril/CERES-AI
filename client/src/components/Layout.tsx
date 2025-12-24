@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Radio, Bell, Settings, Leaf } from "lucide-react";
+import { LayoutDashboard, Radio, Bell, Settings, Leaf, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Header } from "@/components/Header";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,11 +14,14 @@ export function Layout({ children }: LayoutProps) {
     { icon: LayoutDashboard, label: "Painel", href: "/" },
     { icon: Radio, label: "Sensores", href: "/sensors" },
     { icon: Bell, label: "Alertas", href: "/alerts" },
+    { icon: FileText, label: "Relatórios", href: "/reports" },
     { icon: Settings, label: "Configurações", href: "/settings" },
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-background flex flex-col font-sans">
+      <Header />
+      <div className="flex flex-1">
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-card border-r border-border/50 flex flex-col sticky top-0 md:h-screen z-20">
         <div className="p-6 flex items-center gap-3">
@@ -78,6 +82,7 @@ export function Layout({ children }: LayoutProps) {
           {children}
         </div>
       </main>
+      </div>
     </div>
   );
 }

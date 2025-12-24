@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import Sensors from "@/pages/Sensors";
 import SensorDetails from "@/pages/SensorDetails";
 import Alerts from "@/pages/Alerts";
+import Reports from "@/pages/Reports";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/sensors" component={Sensors} />
       <Route path="/sensors/:id" component={SensorDetails} />
       <Route path="/alerts" component={Alerts} />
+      <Route path="/reports" component={Reports} />
       <Route path="/admin" component={Admin} />
       <Route path="/settings" component={() => <div className="p-8 text-center text-muted-foreground">Página de Configurações em Desenvolvimento</div>} />
       <Route component={NotFound} />
