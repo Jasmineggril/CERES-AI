@@ -55,11 +55,22 @@ export const weatherData = pgTable("weather_data", {
   timestamp: timestamp("timestamp").defaultNow(),
 });
 
+export const userStats = pgTable("user_stats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  points: integer("points").default(0),
+  level: integer("level").default(1),
+  denunciasCount: integer("denuncias_count").default(0),
+  achievement: text("achievement").default("iniciante"), // 'iniciante', 'protetor', 'guardião', 'herói'
+  lastActivity: timestamp("last_activity").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, role: true });
 export const insertSensorSchema = createInsertSchema(sensors).omit({ id: true, lastPing: true });
 export const insertReadingSchema = createInsertSchema(readings).omit({ id: true, timestamp: true });
 export const insertAlertSchema = createInsertSchema(alerts).omit({ id: true, createdAt: true, isResolved: true });
 export const insertWeatherSchema = createInsertSchema(weatherData).omit({ id: true, timestamp: true });
+export const insertUserStatsSchema = createInsertSchema(userStats).omit({ id: true, lastActivity: true });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -71,3 +82,5 @@ export type Alert = typeof alerts.$inferSelect;
 export type InsertAlert = z.infer<typeof insertAlertSchema>;
 export type WeatherData = typeof weatherData.$inferSelect;
 export type InsertWeatherData = z.infer<typeof insertWeatherSchema>;
+export type UserStats = typeof userStats.$inferSelect;
+export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;

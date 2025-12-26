@@ -1,8 +1,8 @@
 import { db } from "./db";
 import {
-  users, sensors, readings, alerts, weatherData,
-  type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData, type InsertUser,
-  type Sensor, type Reading, type Alert, type WeatherData, type User
+  users, sensors, readings, alerts, weatherData, userStats,
+  type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData, type InsertUser, type InsertUserStats,
+  type Sensor, type Reading, type Alert, type WeatherData, type User, type UserStats
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -31,6 +31,11 @@ export interface IStorage {
   getWeatherData(latitude?: number, longitude?: number): Promise<WeatherData[]>;
   createWeatherData(data: InsertWeatherData): Promise<WeatherData>;
   getLatestWeather(): Promise<WeatherData | undefined>;
+
+  // Gamification
+  getUserStats(userId: number): Promise<UserStats | undefined>;
+  createUserStats(stats: InsertUserStats): Promise<UserStats>;
+  addPoints(userId: number, points: number): Promise<UserStats | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -107,15 +112,7 @@ export class DatabaseStorage implements IStorage {
 
   // Weather Data
   async getWeatherData(latitude?: number, longitude?: number): Promise<WeatherData[]> {
-    let query = db.select().from(weatherData);
-    
-    if (latitude !== undefined && longitude !== undefined) {
-      // Find weather data near coordinates (within ~1 degree)
-      query = query.where(
-        (sq) => sq
-      );
-    }
-    
+    const query = db.select().from(weatherData);
     return await query.orderBy(desc(weatherData.timestamp));
   }
 
@@ -129,6 +126,36 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(weatherData.timestamp))
       .limit(1);
     return latest;
+  }
+
+  // Gamification
+  async getUserStats(userId: number): Promise<UserStats | undefined> {
+    const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    return stats;
+  }
+
+  async createUserStats(stats: InsertUserStats): Promise<UserStats> {
+    const [newStats] = await db.insert(userStats).values(stats).returning();
+    return newStats;
+  }
+
+  async addPoints(userId: number, points: number): Promise<UserStats | undefined> {
+    const current = await this.getUserStats(userId);
+    if (!current) return undefined;
+    
+    const currentPoints = current.points ?? 0;
+    const newPoints = currentPoints + points;
+    const newLevel = Math.floor(newPoints / 100) + 1;
+    let achievement = "iniciante";
+    if (newPoints >= 500) achievement = "herói";
+    else if (newPoints >= 300) achievement = "guardião";
+    else if (newPoints >= 100) achievement = "protetor";
+
+    const [updated] = await db.update(userStats)
+      .set({ points: newPoints, level: newLevel, achievement, lastActivity: new Date() })
+      .where(eq(userStats.userId, userId))
+      .returning();
+    return updated;
   }
 }
 

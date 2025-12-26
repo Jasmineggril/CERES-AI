@@ -158,6 +158,13 @@ export async function registerRoutes(
     res.json(alert);
   });
 
+  // Gamification
+  app.post("/api/user-stats/:userId/add-points", async (req, res) => {
+    const { points } = req.body;
+    const updated = await storage.addPoints(Number(req.params.userId), points);
+    res.json(updated || { error: "User not found" });
+  });
+
   await seedDatabase();
 
   return httpServer;

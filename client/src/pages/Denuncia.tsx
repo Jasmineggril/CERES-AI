@@ -3,55 +3,54 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Flame, Send } from "lucide-react";
-import { supabase } from "@/lib/supabase"; // Importação importante para o banco
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Denuncia() {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-
-  // Estados para capturar o que o usuário digita
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("medium");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // ENVIO REAL PARA O SUPABASE
-      const { error } = await supabase
-        .from('alerts') // Nome da tabela que você criou
-        .insert([
-          { 
-            title: title, 
-            message: message, 
-            severity: severity,
-            isResolved: false 
-          }
-        ]);
-
-      if (error) throw error;
-
+  const createAlertMutation = useMutation({
+    mutationFn: async (data: { title: string; message: string; severity: string }) => {
+      const response = await fetch("/api/alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error("Erro ao enviar denúncia");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/alerts"] });
       toast({
         title: "Denúncia Enviada com Sucesso!",
-        description: "O banco de dados foi atualizado e o alerta aparecerá no Dashboard.",
+        description: "A comunidade foi notificada e órgãos competentes foram informados.",
         variant: "default",
       });
-
-      // Limpa o formulário
       setTitle("");
       setMessage("");
-
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast({
         title: "Erro ao enviar",
         description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !message.trim()) {
+      toast({
+        title: "Preencha todos os campos",
+        variant: "destructive",
+      });
+      return;
+    }
+    createAlertMutation.mutate({ title, message, severity });
   };
 
   return (
@@ -103,10 +102,12 @@ export default function Denuncia() {
           </div>
 
           <Button 
-            disabled={loading}
+            disabled={createAlertMutation.isPending}
+            type="submit"
             className="w-full py-6 text-lg font-bold bg-emerald-700 hover:bg-emerald-800 transition-all rounded-xl shadow-lg"
+            data-testid="button-submit-denuncia"
           >
-            {loading ? "Processando no Banco..." : "REGISTRAR NO SUPABASE"}
+            {createAlertMutation.isPending ? "Enviando..." : "REPORTAR FOCO"}
             <Send className="ml-2 w-5 h-5" />
           </Button>
         </form>

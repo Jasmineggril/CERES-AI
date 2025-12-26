@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { LayoutDashboard, Radio, Bell, Settings, Leaf, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/Header";
+import { Chatbot } from "@/components/Chatbot";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -83,6 +84,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </main>
       </div>
+      <Chatbot />
     </div>
   );
 }
