@@ -1,0 +1,113 @@
+# Transformação do Projeto FlorestaAI para CERES AI
+
+Analise toda a estrutura atual do projeto FlorestaAI e realize uma refatoração completa para transformá-lo em um novo produto chamado CERES AI.
+
+## Nova Identidade
+
+Nome:
+CERES AI
+
+Significado:
+Cadastro Estratégico para Regularização e Eficiência Sustentável com Inteligência Artificial.
+
+Inspirado em Ceres, deusa romana da agricultura, fertilidade da terra e colheitas.
+
+## Objetivo do Sistema
+
+Transformar o projeto atual em uma plataforma de Inteligência Artificial voltada para apoiar o Cadastro Ambiental Rural (CAR) e o Sistema SICAR.
+
+O sistema deve ajudar produtores rurais, analistas ambientais e gestores públicos a compreender informações ambientais complexas de forma simples, acessível e inteligente.
+
+## Alterações Visuais
+
+* Substituir todas as referências ao nome FlorestaAI por CERES AI.
+
+* Atualizar logo, favicon e identidade visual.
+
+* Utilizar uma paleta baseada em:
+
+  * Verde escuro
+  * Verde agrícola
+  * Azul governamental
+  * Branco
+
+* Aparência moderna estilo GovTech.
+
+## Novas Funcionalidades
+
+### CERES Assistente
+
+Chat com IA para responder perguntas sobre:
+
+* Cadastro Ambiental Rural
+* APP
+* Reserva Legal
+* Código Florestal
+* Regularização Ambiental
+
+### CERES Diagnóstico
+
+Receber dados e gerar:
+
+* Pendências
+* Inconsistências
+* Recomendações
+* Próximos passos
+
+### CERES Maps
+
+Criar módulo de mapas para exibir:
+
+* APPs
+* Reservas Legais
+* Áreas consolidadas
+* Áreas protegidas
+
+### CERES Insights
+
+Dashboard com:
+
+* Indicadores ambientais
+* Estatísticas
+* Alertas
+* Monitoramento territorial
+
+### CERES Acessível
+
+Implementar:
+
+* Leitura por voz
+* Linguagem simplificada
+* Design responsivo
+* Alto contraste
+
+## Página Inicial
+
+Título:
+
+CERES AI
+
+Subtítulo:
+
+Transformando dados ambientais em decisões inteligentes.
+
+Descrição:
+
+Uma plataforma de Inteligência Artificial para tornar o Cadastro Ambiental Rural mais acessível, eficiente e sustentável.
+
+## Estrutura do MVP
+
+Menu:
+
+* Início
+* Assistente IA
+* Diagnóstico
+* Mapas
+* Dashboard
+* Sobre
+
+Criar uma demonstração funcional mesmo utilizando dados simulados.
+
+Priorizar usabilidade, apresentação visual e experiência de usuário.
+
+O resultado final deve parecer uma solução pronta para apresentação em hackathons, programas de inovação pública e órgãos governamentais.
