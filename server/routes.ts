@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import crypto from "crypto";
+import { db } from "./db";
+import { alerts } from "@shared/schema";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password).digest("hex");
@@ -175,34 +177,112 @@ export async function seedDatabase() {
   if (sensors.length === 0) {
     console.log("Seeding database...");
     const s1 = await storage.createSensor({
-      name: "Alpha Station",
-      type: "Environmental",
-      location: "North Sector",
-      latitude: -3.4653,
-      longitude: -62.2159,
+      name: "Estação Alfa",
+      type: "Ambiental",
+      location: "Setor Norte – Chapada dos Veadeiros",
+      latitude: -14.1414,
+      longitude: -47.6792,
       status: "active"
     });
     const s2 = await storage.createSensor({
-      name: "Beta Station",
-      type: "Fire Detection",
-      location: "East Sector",
-      latitude: -3.4680,
-      longitude: -62.2100,
+      name: "Estação Beta",
+      type: "Detecção de Incêndio",
+      location: "Setor Leste – Vale do Paranã",
+      latitude: -13.9500,
+      longitude: -47.2000,
+      status: "active"
+    });
+    const s3 = await storage.createSensor({
+      name: "Estação Gama",
+      type: "Qualidade do Ar",
+      location: "Setor Sul – Alto Paraíso",
+      latitude: -14.1230,
+      longitude: -47.5100,
       status: "active"
     });
 
-    // Readings
-    await storage.createReading({ sensorId: s1.id, value: 24.5, unit: "°C" });
-    await storage.createReading({ sensorId: s1.id, value: 25.1, unit: "°C" });
-    await storage.createReading({ sensorId: s1.id, value: 60, unit: "%" }); // Humidity
+    await storage.createReading({ sensorId: s1.id, value: 36.8, unit: "°C" });
+    await storage.createReading({ sensorId: s1.id, value: 28, unit: "%" });
+    await storage.createReading({ sensorId: s2.id, value: 42.1, unit: "°C" });
+    await storage.createReading({ sensorId: s3.id, value: 185, unit: "AQI" });
 
-    // Alerts
+    console.log("Database seeded!");
+  }
+
+  // Re-seed alerts in Portuguese if they are still in the old English format
+  const existingAlerts = await storage.getAlerts();
+  const hasEnglishAlerts = existingAlerts.some(a =>
+    a.title.toLowerCase().includes("warning") ||
+    a.title.toLowerCase().includes("temperature") ||
+    a.title.toLowerCase().includes("high")
+  );
+
+  if (existingAlerts.length === 0 || hasEnglishAlerts) {
+    // Clear old alerts and insert Portuguese ones
+    await db.delete(alerts);
+
+    const allSensors = await storage.getSensors();
+    const s1id = allSensors[0]?.id ?? 1;
+    const s2id = allSensors[1]?.id ?? 2;
+    const s3id = allSensors[2]?.id ?? (allSensors[0]?.id ?? 1);
+
     await storage.createAlert({
-      sensorId: s2.id,
-      title: "High Temperature Warning",
-      message: "Temperature exceeded threshold in East Sector.",
+      sensorId: s2id,
+      title: "🔥 Foco de Incêndio Detectado",
+      message: "Sensor Beta registrou temperatura acima de 60°C no Setor Leste – Vale do Paranã. Possível foco ativo de queimada. Equipe de campo notificada para inspeção imediata.",
+      severity: "critical"
+    });
+
+    await storage.createAlert({
+      sensorId: s1id,
+      title: "🌡️ Temperatura Crítica no Cerrado",
+      message: "A temperatura no Setor Norte atingiu 42°C, superando o limiar de risco para incêndios. Umidade relativa abaixo de 15%. Risco de propagação de fogo é MUITO ALTO.",
+      severity: "critical"
+    });
+
+    await storage.createAlert({
+      sensorId: s3id,
+      title: "💨 Qualidade do Ar – Nível Prejudicial",
+      message: "Índice de Qualidade do Ar (IQA) atingiu 185 μg/m³ no Setor Sul. Partículas finas (PM2.5) em concentração prejudicial à saúde. Evite atividades ao ar livre.",
+      severity: "critical"
+    });
+
+    await storage.createAlert({
+      sensorId: s1id,
+      title: "⚠️ Risco Elevado de Queimada",
+      message: "Condições meteorológicas favoráveis a incêndios detectadas: ventos de 40 km/h, umidade 18%, temperatura 38°C. Período de seca prolongada na região há 45 dias.",
       severity: "medium"
     });
-    console.log("Database seeded!");
+
+    await storage.createAlert({
+      sensorId: s2id,
+      title: "📡 Falha de Comunicação – Estação Beta",
+      message: "A Estação Beta não transmite dados há 2 horas. Pode indicar dano físico por incêndio, queda de energia ou falha de rede. Manutenção preventiva solicitada.",
+      severity: "medium"
+    });
+
+    await storage.createAlert({
+      sensorId: s3id,
+      title: "🌧️ Período de Seca Severa",
+      message: "Dados meteorológicos indicam 52 dias sem chuva no Cerrado Central. Reservatórios locais abaixo de 20% da capacidade. Alerta de escassez hídrica para municípios da região.",
+      severity: "medium"
+    });
+
+    await storage.createAlert({
+      sensorId: s1id,
+      title: "ℹ️ Atualização do Sistema CERES AI",
+      message: "Módulo de análise preditiva atualizado para versão 2.1. Novo algoritmo de detecção de focos com 94% de precisão integrado. Dados históricos do INPE incorporados à base.",
+      severity: "low"
+    });
+
+    const resolved = await storage.createAlert({
+      sensorId: s2id,
+      title: "✅ Foco Controlado – Setor Leste",
+      message: "Foco de incêndio no Setor Leste contido com sucesso pelas equipes do IBAMA. Área de 12 hectares afetada. Reflorestamento emergencial será iniciado em 30 dias.",
+      severity: "medium"
+    });
+    await storage.resolveAlert(resolved.id);
+
+    console.log("Alertas re-semeados em Português!");
   }
 }

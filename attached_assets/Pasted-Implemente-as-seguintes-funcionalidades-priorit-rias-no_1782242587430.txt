@@ -1,0 +1,97 @@
+Implemente as seguintes funcionalidades prioritárias no CERES AI para torná-lo mais competitivo no haCARthon:
+
+## Prioridade 1 - Mapa Interativo Ambiental
+
+Adicionar mapa interativo utilizando Leaflet ou Mapbox.
+
+Funcionalidades:
+
+* Visualização do Brasil.
+* Marcadores ambientais.
+* Camadas para APP.
+* Camadas para Reserva Legal.
+* Camadas para áreas consolidadas.
+* Sistema de zoom.
+* Pesquisa por município.
+* Interface responsiva.
+
+## Prioridade 2 - Inteligência Territorial
+
+Criar módulo "CERES Maps".
+
+Adicionar:
+
+* Estatísticas territoriais.
+* Painel lateral com informações da região selecionada.
+* Indicadores ambientais simulados para demonstração.
+
+## Prioridade 3 - Assistente IA Especializado
+
+Criar persona especializada em:
+
+* Cadastro Ambiental Rural (CAR).
+* SICAR.
+* Código Florestal.
+* Reserva Legal.
+* APP.
+* Regularização Ambiental.
+
+A IA deve responder de forma objetiva e educativa.
+
+## Prioridade 4 - Dashboard GovTech
+
+Adicionar página "CERES Insights".
+
+Indicadores:
+
+* Cadastros analisados.
+* Pendências identificadas.
+* Taxa de conformidade.
+* Municípios monitorados.
+* Alertas ambientais.
+* Área total monitorada.
+
+Utilizar gráficos modernos.
+
+## Prioridade 5 - Dados Ambientais
+
+Preparar estrutura para integração futura com:
+
+* INPE.
+* MapBiomas.
+* SICAR.
+* IBGE.
+
+Caso não existam APIs disponíveis no MVP, utilizar dados simulados realistas.
+
+## Prioridade 6 - Acessibilidade
+
+Adicionar:
+
+* Alto contraste.
+* Leitura por voz.
+* Ajuste de tamanho da fonte.
+* Linguagem simplificada.
+
+## Prioridade 7 - Tela Inicial
+
+Criar uma homepage de nível profissional contendo:
+
+Hero Section:
+"Transformando dados ambientais em decisões inteligentes."
+
+Botões:
+
+* Explorar Plataforma
+* Assistente IA
+* Dashboard
+
+Adicionar:
+
+* Estatísticas animadas.
+* Cards de funcionalidades.
+* Benefícios para produtores rurais.
+* Benefícios para gestores públicos.
+
+Objetivo:
+Fazer o CERES AI parecer uma solução GovTech pronta para apresentação a banca avaliadora do haCARthon 2026.
