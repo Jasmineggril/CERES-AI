@@ -1,0 +1,162 @@
+ANALISE TODO O PROJETO CERES AI E IMPLEMENTE AS MELHORIAS ABAIXO.
+
+OBJETIVO:
+Aumentar a clareza da proposta, destacar o uso de Inteligência Artificial e alinhar o projeto aos critérios de avaliação do haCARthon 2026.
+
+==================================================
+
+1. DESTACAR A IA NA HOME
+
+Criar uma nova seção logo após o Hero.
+
+Título:
+🤖 Como a Inteligência Artificial ajuda você
+
+Subtítulo:
+A CERES AI transforma informações técnicas e complexas em orientações simples e acionáveis.
+
+Adicionar exemplos visuais:
+
+Pergunta:
+"O que é Reserva Legal?"
+
+Resposta da IA:
+"Reserva Legal é uma área da propriedade rural que deve ser preservada com vegetação nativa, conforme o Código Florestal."
+
+Pergunta:
+"Como regularizar meu CAR?"
+
+Resposta da IA:
+"A partir das informações do cadastro, identificamos pendências e sugerimos os próximos passos para regularização."
+
+Adicionar interface visual semelhante a um chat.
+
+==================================================
+
+2. CRIAR SEÇÃO ANTES E DEPOIS
+
+Título:
+Transformando burocracia em compreensão
+
+Exemplo:
+
+ANTES:
+"Inconsistência geoespacial detectada em Área de Preservação Permanente."
+
+DEPOIS:
+"Uma área protegida da sua propriedade pode estar marcada incorretamente. Revise o mapa ou procure apoio técnico."
+
+Adicionar pelo menos 4 exemplos.
+
+==================================================
+
+3. CRIAR SEÇÃO "POR QUE AGORA?"
+
+Título:
+Por que o CERES AI é importante?
+
+Conteúdo:
+
+* Mais de 8 milhões de imóveis cadastrados no CAR.
+* Crescente necessidade de regularização ambiental.
+* Importância do acesso ao crédito rural.
+* Necessidade de tornar a legislação mais acessível.
+* Modernização do SICAR e dos serviços públicos digitais.
+
+Utilizar cards com ícones.
+
+==================================================
+
+4. DESTACAR O DESAFIO ATENDIDO
+
+Criar uma seção específica.
+
+Título:
+Desafios que estamos resolvendo
+
+Cards:
+
+✔ Simplificação do Cadastro Ambiental Rural
+
+✔ Educação e entendimento da legislação ambiental
+
+✔ Apoio à regularização ambiental
+
+✔ Redução de erros cadastrais
+
+✔ Apoio a analistas ambientais
+
+✔ Inclusão digital no campo
+
+==================================================
+
+5. MELHORAR A SEÇÃO DE EQUIPE
+
+Criar seção premium.
+
+Título:
+Conheça os Fundadores
+
+Adicionar foto, LinkedIn e mini biografia.
+
+Jasmine de Sá Araújo
+Co-Founder & CEO
+
+Pedro Henrique Bento Martins
+Co-Founder & CTO
+
+Adicionar visual de startup e destaque institucional.
+
+==================================================
+
+6. IMPACTO ESPERADO
+
+Título:
+Impacto esperado
+
+Adicionar métricas visuais:
+
+40% menos erros cadastrais
+
+60% menos dúvidas recorrentes
+
+30% menos retrabalho dos analistas
+
+50% mais compreensão da legislação
+
+Exibir em cards animados.
+
+==================================================
+
+7. CHAMADA FINAL
+
+Substituir chamada final atual por:
+
+🌱 CERES AI
+
+Seu CAR mais simples, inteligente e acessível.
+
+Tecnologia para proteger o território.
+Inteligência para preservar o futuro.
+
+Botão:
+Conhecer a Plataforma
+
+==================================================
+
+DIRETRIZ FINAL
+
+Não alterar a identidade visual existente.
+
+Preservar logo, paleta e estrutura atual.
+
+O objetivo é reforçar:
+
+* Inteligência Artificial
+* Impacto público
+* Clareza da solução
+* Alinhamento ao haCARthon
+* Potencial de implementação real
+
+Resultado esperado:
+Plataforma com aparência de finalista e potencial de premiação no haCARthon 2026.
