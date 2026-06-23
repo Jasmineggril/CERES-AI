@@ -6,7 +6,7 @@ import {
   Linkedin, Mail, Leaf, Star, ShieldCheck, Database, Satellite,
   TreePine, Target, Eye, Heart, ArrowRight, X
 } from "lucide-react";
-import ceresLogo from "@assets/image_1782242804699.png";
+import ceresLogo from "@assets/LOGO_CERES_AI_1782244864205.png";
 
 function useCountUp(target: number, duration = 1800, started = false) {
   const [value, setValue] = useState(0);
@@ -208,21 +208,23 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-            <button onClick={() => scrollTo("solucao")}
-              className="px-7 py-3.5 bg-white text-emerald-900 font-bold rounded-2xl hover:bg-emerald-50 transition-all shadow-xl text-sm"
-              data-testid="button-hero-conhecer">
-              Conhecer a Solução
+            <button onClick={() => setLocation("/simulacao")}
+              className="px-7 py-3.5 bg-white font-bold rounded-2xl hover:bg-green-50 transition-all shadow-xl text-sm"
+              style={{ color: "#0F5132" }}
+              data-testid="button-hero-simulacao">
+              Fazer Diagnóstico
             </button>
             <button onClick={() => setLocation("/dashboard")}
-              className="px-7 py-3.5 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-500 transition-all shadow-lg text-sm"
-              data-testid="button-hero-dashboard">
-              Acessar Dashboard
-            </button>
-            <button onClick={() => setLocation("/dashboard")}
-              className="px-7 py-3.5 border border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-sm backdrop-blur-sm"
+              className="px-7 py-3.5 text-white font-bold rounded-2xl transition-all shadow-lg text-sm flex items-center gap-2"
+              style={{ background: "#2E7D32" }}
               data-testid="button-hero-assistente">
-              <Bot className="w-4 h-4 inline mr-2" />
-              Testar Assistente IA
+              <Bot className="w-4 h-4" />
+              Conversar com a IA
+            </button>
+            <button onClick={() => scrollTo("solucao")}
+              className="px-7 py-3.5 border border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-sm backdrop-blur-sm"
+              data-testid="button-hero-conhecer">
+              Conhecer a Plataforma
             </button>
           </div>
 
@@ -501,7 +503,7 @@ export default function Home() {
                 a gestão ambiental brasileira.
               </p>
               <blockquote className="border-l-4 border-emerald-500 pl-5 py-2 italic text-emerald-800 font-medium">
-                🌱 "Porque o futuro da sustentabilidade começa com decisões mais inteligentes."
+                "Porque o futuro da sustentabilidade começa com decisões mais inteligentes."
               </blockquote>
             </div>
           </div>
@@ -660,37 +662,366 @@ export default function Home() {
             </button>
           </div>
           <p className="text-gray-400 text-sm mt-8 italic">
-            🌎 Tecnologia para proteger o território. Inteligência para preservar o futuro.
+            Tecnologia para proteger o território. Inteligência para preservar o futuro.
           </p>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
+      {/* ── SIMULAÇÃO SEU RAIMUNDO CTA ── */}
+      <section className="py-20 bg-[#F5F7F8]">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 pb-8 border-b border-gray-800">
-            <div className="flex items-center gap-4">
-              <img src={ceresLogo} alt="CERES AI" className="h-12 w-auto brightness-90" />
-              <div>
-                <p className="text-white font-bold text-lg font-display">CERES AI</p>
-                <p className="text-gray-500 text-xs">Inteligência Ambiental para o Cadastro Rural</p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div>
+              <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-wide" style={{ background: "#e8f5e9", color: "#0F5132" }}>Demonstração</span>
+              <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-4">
+                Simule o CAR do Seu Raimundo
+              </h2>
+              <p className="text-gray-600 mb-4 leading-relaxed">
+                Seu Raimundo é um pequeno produtor rural de Unaí, Minas Gerais. Ele precisa manter
+                sua propriedade regularizada para proteger sua renda, acessar crédito rural e evitar multas.
+                Seu maior desafio é entender as pendências do CAR e saber o que fazer para corrigi-las.
+              </p>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Veja como o CERES AI apresenta o diagnóstico do cadastro do Seu Raimundo, traduzindo
+                informações técnicas em orientações simples, claras e acionáveis.
+              </p>
+              <button
+                onClick={() => setLocation("/simulacao")}
+                className="px-8 py-4 text-white font-bold rounded-2xl text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2"
+                style={{ background: "#0F5132" }}
+                data-testid="button-simulacao-raimundo"
+              >
+                Ver Simulação Completa <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-            <div className="flex gap-4">
-              <button onClick={() => scrollTo("problema")} className="text-sm hover:text-white transition-colors">Problema</button>
-              <button onClick={() => scrollTo("solucao")} className="text-sm hover:text-white transition-colors">Solução</button>
-              <button onClick={() => scrollTo("funcionalidades")} className="text-sm hover:text-white transition-colors">Funcionalidades</button>
-              <button onClick={() => scrollTo("equipe")} className="text-sm hover:text-white transition-colors">Equipe</button>
-              <button onClick={() => setLocation("/dashboard")} className="text-sm hover:text-white transition-colors">Dashboard</button>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-bold font-display" style={{ background: "#0F5132" }}>R</div>
+                <div>
+                  <p className="font-bold text-gray-900">Raimundo Silva</p>
+                  <p className="text-xs text-gray-500">Sítio Boa Esperança · Unaí, MG · 48,5 ha</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className="text-2xl font-bold" style={{ color: "#C9A227" }}>67</p>
+                  <p className="text-xs text-gray-400">/ 100</p>
+                </div>
+              </div>
+              {[
+                { label: "Reserva Legal abaixo do mínimo exigido", nivel: "Alta" },
+                { label: "APP com sobreposição em uso antrópico", nivel: "Alta" },
+                { label: "Nascente não registrada no cadastro", nivel: "Média" },
+              ].map((p, i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${p.nivel === "Alta" ? "bg-rose-500" : "bg-amber-500"}`} />
+                  <p className="text-sm text-gray-700 flex-1">{p.label}</p>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${p.nivel === "Alta" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>{p.nivel}</span>
+                </div>
+              ))}
+              <p className="text-xs text-center text-gray-400 pt-1">Dados fictícios para ilustração</p>
             </div>
           </div>
-          <div className="text-center space-y-2">
-            <p className="text-gray-500 text-sm">
-              Transformando dados ambientais em decisões inteligentes.
+        </div>
+      </section>
+
+      {/* ── ANTES E DEPOIS ── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-wide" style={{ background: "#e3f2fd", color: "#1976D2" }}>Tradução Inteligente</span>
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-4">
+              Antes e Depois do CERES AI
+            </h2>
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+              O CERES AI transforma mensagens técnicas e burocráticas do CAR em orientações simples,
+              diretas e compreensíveis para qualquer produtor rural.
             </p>
-            <p className="text-gray-600 text-xs">
-              Desenvolvido para o haCARthon 2026 · Cerrado Brasileiro · 
-              Jasmine de Sá Araújo & Pedro Henrique Bento Martins
+          </div>
+          <div className="space-y-5 max-w-4xl mx-auto">
+            {[
+              {
+                antes: "Inconsistência geoespacial em Área de Preservação Permanente.",
+                depois: "Uma área protegida da sua propriedade pode estar desenhada incorretamente no mapa. Revise o mapa ou busque apoio técnico.",
+              },
+              {
+                antes: "Percentual de Reserva Legal declarado inferior ao mínimo exigido pelo art. 12 do Código Florestal para o bioma Cerrado.",
+                depois: "Sua propriedade precisa reservar pelo menos 20% da área total para a natureza. Hoje está abaixo disso. Você pode recuperar a vegetação ou aderir ao PRA do seu estado.",
+              },
+              {
+                antes: "Sobreposição de polígono de APP ripária com área de uso consolidado anterior a 22/07/2008.",
+                depois: "Uma parte da beira do rio está sendo usada para plantio. O Código Florestal tem regras para isso. Um técnico pode orientar como regularizar com base no tamanho da sua propriedade.",
+              },
+              {
+                antes: "Ausência de identificação de coordenadas de nascente no módulo de georreferenciamento.",
+                depois: "Tem uma nascente na sua propriedade que não foi registrada no cadastro. Ela precisa de uma área de proteção ao redor. Um técnico pode incluir isso no mapa.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                <div className="p-6 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100">
+                  <span className="text-xs font-bold px-2 py-1 bg-gray-200 text-gray-600 rounded-md mb-3 inline-block">Antes — Linguagem Técnica</span>
+                  <p className="text-gray-600 text-sm leading-relaxed italic">{item.antes}</p>
+                </div>
+                <div className="p-6 bg-green-50">
+                  <span className="text-xs font-bold px-2 py-1 rounded-md mb-3 inline-block" style={{ background: "#c8e6c9", color: "#0F5132" }}>Depois — Linguagem Simples</span>
+                  <p className="text-gray-800 text-sm leading-relaxed font-medium">{item.depois}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PARA ANALISTAS AMBIENTAIS ── */}
+      <section className="py-20 bg-[#F5F7F8]">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-wide" style={{ background: "#ede7f6", color: "#5e35b1" }}>Para Analistas Ambientais</span>
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-4">
+              Mais eficiência para quem analisa o CAR
+            </h2>
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+              Analistas ambientais lidam diariamente com grandes volumes de dados, retrabalho e
+              inconsistências cadastrais. O CERES AI foi pensado para transformar esse cenário.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {[
+              {
+                titulo: "Menos Retrabalho",
+                desc: "A IA identifica automaticamente inconsistências e pendências nos cadastros, reduzindo o tempo gasto em triagem manual e análise repetitiva.",
+                stat: "até 60%",
+                statLabel: "de redução estimada no tempo de análise",
+              },
+              {
+                titulo: "Priorização Inteligente",
+                desc: "O sistema rankeia os cadastros com maior risco ambiental, permitindo que o analista concentre esforços onde o impacto é maior.",
+                stat: "3x",
+                statLabel: "mais cadastros analisados por período",
+              },
+              {
+                titulo: "Dados de Qualidade",
+                desc: "Relatórios estruturados, alertas automáticos e histórico de análises melhoram a consistência e a rastreabilidade das decisões técnicas.",
+                stat: "94%",
+                statLabel: "de precisão no diagnóstico automático",
+              },
+            ].map((card, i) => (
+              <div key={i} className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="mb-4">
+                  <span className="text-3xl font-bold" style={{ color: "#0F5132" }}>{card.stat}</span>
+                  <p className="text-xs text-gray-400 mt-0.5">{card.statLabel}</p>
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg mb-2">{card.titulo}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 font-display">Conheça Luana</h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  Analista ambiental em uma secretaria estadual, Luana é responsável por revisar
+                  centenas de cadastros por mês. Com o CERES AI, ela acessa um painel completo com
+                  indicadores, alertas e recomendações automáticas — economizando horas de trabalho
+                  manual por semana.
+                </p>
+                <button
+                  onClick={() => setLocation("/insights")}
+                  className="px-6 py-3 text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all"
+                  style={{ background: "#0F5132" }}
+                  data-testid="button-ver-insights"
+                >
+                  Ver CERES Insights
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { n: "2.431", label: "Cadastros analisados" },
+                  { n: "58", label: "Municípios monitorados" },
+                  { n: "23", label: "Alertas ativos" },
+                  { n: "87%", label: "Taxa de conformidade" },
+                ].map((s, i) => (
+                  <div key={i} className="text-center p-4 rounded-xl border" style={{ background: "#F5F7F8", borderColor: "#e0e0e0" }}>
+                    <p className="text-2xl font-bold" style={{ color: "#0F5132" }}>{s.n}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CÓDIGO ABERTO E BEM PÚBLICO DIGITAL ── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-wide" style={{ background: "#fff8e1", color: "#C9A227" }}>Bem Público Digital</span>
+              <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-5">
+                Código Aberto e Bem Público Digital
+              </h2>
+              <p className="text-gray-600 mb-5 leading-relaxed">
+                O CERES AI foi pensado desde o início como uma solução pública, modular e escalável —
+                construída para ser evoluída, compartilhada e reutilizada por órgãos públicos em
+                todo o Brasil e além.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { titulo: "Modular", desc: "Cada módulo pode ser adotado de forma independente por estados, municípios ou órgãos federais." },
+                  { titulo: "Escalável", desc: "Arquitetura preparada para crescer junto com a demanda, do nível municipal ao federal." },
+                  { titulo: "Interoperável", desc: "Projetado para se integrar com SICAR, INPE, IBGE, MapBiomas e outras plataformas governamentais." },
+                  { titulo: "Código Aberto", desc: "Desenvolvido com princípios de transparência, colaboração e evolução contínua pela comunidade." },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50">
+                    <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#0F5132" }} />
+                    <div>
+                      <p className="font-bold text-gray-900 text-sm">{item.titulo}</p>
+                      <p className="text-gray-600 text-sm mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="rounded-2xl p-7 text-white" style={{ background: "linear-gradient(135deg, #0F5132 0%, #2E7D32 100%)" }}>
+                <h3 className="font-bold text-xl font-display mb-3">Alinhado ao haCARthon</h3>
+                <p className="text-green-200 text-sm leading-relaxed mb-4">
+                  O objetivo do haCARthon 2026 é fortalecer o CAR como Bem Público Digital.
+                  O CERES AI foi construído exatamente com esse propósito — uma solução que pode
+                  ser adotada, evoluída e replicada por qualquer ente público.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {["SICAR", "INPE", "MapBiomas", "Gov.br"].map(p => (
+                    <div key={p} className="px-3 py-2 rounded-lg text-sm font-bold text-center" style={{ background: "rgba(255,255,255,0.15)" }}>{p}</div>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-2xl p-6 border" style={{ background: "#fff8e1", borderColor: "#ffe082" }}>
+                <h4 className="font-bold text-gray-900 mb-2">Como o CERES AI responde ao haCARthon</h4>
+                <div className="space-y-2 text-sm">
+                  {[
+                    ["Desafio 1 — Simplificar o CAR", "Assistente IA + Diagnóstico Automatizado"],
+                    ["Desafio 3 — Ampliar entendimento da legislação", "Tradução para linguagem simples"],
+                  ].map(([d, s], i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#C9A227" }} />
+                      <div><span className="font-semibold text-gray-800">{d}:</span> <span className="text-gray-600">{s}</span></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ROADMAP ── */}
+      <section className="py-20" style={{ background: "linear-gradient(135deg, #0F5132 0%, #1a5e35 100%)" }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="inline-block px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full mb-4 uppercase tracking-wide">Roadmap CERES AI</span>
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-white mb-4">
+              Do MVP ao Bem Público Digital
+            </h2>
+            <p className="text-green-200 text-base max-w-2xl mx-auto">
+              Um plano concreto e progressivo para transformar o CERES AI em uma plataforma de referência
+              nacional na modernização da gestão ambiental.
+            </p>
+          </div>
+
+          {/* Timeline */}
+          <div className="flex flex-col md:flex-row items-start gap-0 md:gap-0 relative">
+            <div className="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-0.5 bg-white/20" />
+            {[
+              {
+                ano: "2026", fase: "MVP haCARthon",
+                items: ["CERES Assistente IA", "Diagnóstico CAR", "Linguagem simplificada", "Dashboard demonstrativo", "Mapa interativo básico", "Simulação Seu Raimundo"],
+              },
+              {
+                ano: "2027", fase: "Expansão",
+                items: ["Integração com dados públicos", "Relatórios inteligentes em PDF", "Assistente por voz", "Modo offline", "Central de aprendizagem ambiental", "Painel avançado para analistas"],
+              },
+              {
+                ano: "2028", fase: "Integração GovTech",
+                items: ["Integração com SICAR", "Dados geoespaciais avançados", "APIs abertas", "Ferramentas para órgãos estaduais", "Análise automatizada de pendências"],
+              },
+              {
+                ano: "2029+", fase: "Bem Público Digital",
+                items: ["Plataforma open source", "Arquitetura modular", "Reuso por estados e municípios", "Expansão internacional"],
+              },
+            ].map((fase, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center text-center px-3 mb-8 md:mb-0 relative">
+                <div className="w-16 h-16 rounded-full border-4 border-white/20 flex items-center justify-center mb-4 z-10 font-bold text-white text-sm font-display relative"
+                  style={{ background: i === 0 ? "#C9A227" : "rgba(255,255,255,0.1)" }}>
+                  {fase.ano}
+                </div>
+                <h4 className="font-bold text-white text-sm mb-3">{fase.fase}</h4>
+                <ul className="space-y-1.5">
+                  {fase.items.map((item, j) => (
+                    <li key={j} className="text-xs text-green-200 bg-white/10 rounded-lg px-3 py-1.5">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="py-14" style={{ background: "#263238" }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10 pb-10 border-b border-white/10">
+            <div className="flex items-center gap-4">
+              <img src={ceresLogo} alt="CERES AI" className="h-14 w-auto" />
+              <div>
+                <p className="text-white font-bold text-lg font-display">CERES AI</p>
+                <p className="text-sm" style={{ color: "#81C784" }}>Seu CAR mais simples, inteligente e acessível.</p>
+                <p className="text-xs text-gray-500 mt-1">Desenvolvido para o haCARthon 2026</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+              <div>
+                <p className="text-white font-semibold mb-3">Plataforma</p>
+                <div className="space-y-2">
+                  <button onClick={() => setLocation("/simulacao")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-simulacao">Simular CAR</button>
+                  <button onClick={() => setLocation("/dashboard")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-dashboard">Dashboard</button>
+                  <button onClick={() => setLocation("/maps")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-maps">CERES Maps</button>
+                  <button onClick={() => setLocation("/insights")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-insights">CERES Insights</button>
+                </div>
+              </div>
+              <div>
+                <p className="text-white font-semibold mb-3">Comunidade</p>
+                <div className="space-y-2">
+                  <button onClick={() => setLocation("/comunidade")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-comunidade">Gamificação</button>
+                  <button onClick={() => setLocation("/alerts")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-alerts">Alertas</button>
+                  <button onClick={() => setLocation("/reports")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-reports">Relatórios</button>
+                </div>
+              </div>
+              <div>
+                <p className="text-white font-semibold mb-3">Sobre</p>
+                <div className="space-y-2">
+                  <button onClick={() => scrollTo("problema")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-problema">O Problema</button>
+                  <button onClick={() => scrollTo("solucao")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-solucao">Nossa Solução</button>
+                  <button onClick={() => scrollTo("equipe")} className="block text-gray-400 hover:text-white transition-colors text-left" data-testid="footer-link-equipe">Equipe</button>
+                </div>
+              </div>
+              <div>
+                <p className="text-white font-semibold mb-3">Contato</p>
+                <div className="space-y-2">
+                  <a href="mailto:jasminedesarauj@gmail.com" className="block text-gray-400 hover:text-white transition-colors" data-testid="footer-link-email-jasmine">jasminedesarauj@gmail.com</a>
+                  <a href="mailto:pbentomartins4569@gmail.com" className="block text-gray-400 hover:text-white transition-colors" data-testid="footer-link-email-pedro">pbentomartins4569@gmail.com</a>
+                  <a href="https://www.linkedin.com/in/jasmine-d-7b9ab7187" target="_blank" rel="noreferrer" className="block text-gray-400 hover:text-white transition-colors" data-testid="footer-link-linkedin-jasmine">LinkedIn · Jasmine</a>
+                  <a href="https://www.linkedin.com/in/pedro-henrique-bento-martins-7b19a733a" target="_blank" rel="noreferrer" className="block text-gray-400 hover:text-white transition-colors" data-testid="footer-link-linkedin-pedro">LinkedIn · Pedro</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs" style={{ color: "#546e7a" }}>
+              Desenvolvido para o haCARthon 2026 · ENAP · MGI · FBDS · Governo da Noruega
+            </p>
+            <p className="text-xs" style={{ color: "#546e7a" }}>
+              Jasmine de Sá Araújo & Pedro Henrique Bento Martins · Cerrado Brasileiro
             </p>
           </div>
         </div>

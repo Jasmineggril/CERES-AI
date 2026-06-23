@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
 import { useState } from "react";
-import ceresLogo from "@assets/image_1782242804699.png";
+import ceresLogo from "@assets/LOGO_CERES_AI_1782244864205.png";
 
 export function Header() {
   const { data: user } = useAuthStatus();

@@ -1,0 +1,3 @@
+- [CERES AI Logo](ceres-logo.md) — new logo is @assets/LOGO_CERES_AI_1782244864205.png (clean circular mark, no text box)
+- [DB Migration Command](db-migration.md) — drizzle-kit push fails if DATABASE_URL points to supabase; must prefix with local PG vars
+- [Color Palette](color-palette.md) — official CERES AI palette defined; primary=#0F5132, gold=#C9A227, geo-blue=#1976D2

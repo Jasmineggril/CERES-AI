@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "@/components/Header";
 import { Chatbot } from "@/components/Chatbot";
 import { AccessibilityBar } from "@/components/AccessibilityBar";
-import ceresLogo from "@assets/image_1782242804699.png";
+import ceresLogo from "@assets/LOGO_CERES_AI_1782244864205.png";
 
 interface LayoutProps {
   children: React.ReactNode;

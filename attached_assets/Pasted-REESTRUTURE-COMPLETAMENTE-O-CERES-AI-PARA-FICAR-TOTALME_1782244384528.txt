@@ -1,0 +1,264 @@
+REESTRUTURE COMPLETAMENTE O CERES AI PARA FICAR TOTALMENTE ALINHADO AO HACARTHON 2026.
+
+OBJETIVO PRINCIPAL:
+Transformar o CERES AI em uma plataforma GovTech focada em simplificar o Cadastro Ambiental Rural (CAR), reduzir erros de preenchimento, aumentar o entendimento da legislação ambiental e apoiar produtores rurais e analistas ambientais.
+
+O sistema NÃO deve parecer apenas um monitoramento ambiental.
+
+O sistema deve parecer um ASSISTENTE INTELIGENTE DE REGULARIZAÇÃO AMBIENTAL.
+
+==================================================
+
+PÁGINA INICIAL
+
+HERO SECTION
+
+Título:
+🌱 CERES AI
+
+Subtítulo:
+Seu CAR mais simples, inteligente e acessível.
+
+Descrição:
+
+O CERES AI utiliza Inteligência Artificial para ajudar produtores rurais a entender, preencher, corrigir e regularizar o Cadastro Ambiental Rural (CAR), reduzindo erros, simplificando a legislação ambiental e fortalecendo a sustentabilidade.
+
+Botões:
+
+[ Fazer Diagnóstico ]
+
+[ Conversar com a IA ]
+
+[ Conhecer a Plataforma ]
+
+Badge:
+
+Desenvolvido para o haCARthon 2026
+
+==================================================
+
+SEÇÃO PROBLEMA
+
+Título:
+
+O desafio da regularização ambiental
+
+Conteúdo:
+
+Milhões de produtores rurais enfrentam dificuldades para compreender regras ambientais, interpretar mapas, entender APPs e Reservas Legais e corrigir pendências no Cadastro Ambiental Rural.
+
+Essas dificuldades geram retrabalho, insegurança, atrasos e dificultam o acesso a benefícios como crédito rural e programas de regularização.
+
+==================================================
+
+SEÇÃO PERSONA
+
+Título:
+
+Conheça Seu Raimundo
+
+Descrição:
+
+Pequeno produtor rural que precisa manter sua propriedade regularizada para proteger sua renda, acessar crédito e evitar multas.
+
+Seu maior desafio é entender a legislação ambiental e utilizar sistemas complexos como o CAR.
+
+Adicionar ilustração moderna.
+
+==================================================
+
+SEÇÃO COMO FUNCIONA
+
+Fluxo visual:
+
+Produtor Rural
+↓
+CERES AI
+↓
+Diagnóstico Inteligente
+↓
+Explicação Simplificada
+↓
+Recomendações Automáticas
+↓
+Regularização Ambiental
+
+==================================================
+
+FUNCIONALIDADES
+
+1. CERES ASSISTENTE
+
+Chat com Inteligência Artificial.
+
+Capaz de responder:
+
+* O que é APP?
+* O que é Reserva Legal?
+* Como corrigir meu CAR?
+* O que significa essa pendência?
+* Quais benefícios eu obtenho ao regularizar meu imóvel?
+
+Responder em linguagem simples.
+
+==================================================
+
+2. CERES DIAGNÓSTICO
+
+Upload ou preenchimento de informações.
+
+A IA deve:
+
+* Detectar inconsistências
+* Identificar pendências
+* Explicar problemas
+* Sugerir correções
+
+Mostrar score de conformidade ambiental.
+
+==================================================
+
+3. CERES MAPS
+
+Mapa interativo.
+
+Exibir:
+
+* APP
+* Reserva Legal
+* Nascentes
+* Uso do Solo
+* Alertas Ambientais
+
+Interface simples.
+
+==================================================
+
+4. CERES APRENDE
+
+Nova funcionalidade.
+
+Criar centro educacional.
+
+Conteúdo:
+
+* Tutoriais
+* Perguntas frequentes
+* Guias rápidos
+* Glossário ambiental
+* Explicações simplificadas da legislação
+
+==================================================
+
+5. CERES INSIGHTS
+
+Painel para analistas ambientais.
+
+Mostrar:
+
+* Cadastros analisados
+* Pendências encontradas
+* Municípios monitorados
+* Alertas ativos
+* Evolução da regularização
+
+==================================================
+
+BENEFÍCIOS
+
+Para produtores:
+
+✓ Menos erros
+
+✓ Menos burocracia
+
+✓ Mais acesso ao crédito
+
+✓ Mais segurança jurídica
+
+✓ Mais facilidade para regularização
+
+Para gestores:
+
+✓ Menos retrabalho
+
+✓ Mais eficiência
+
+✓ Melhor qualidade dos dados
+
+✓ Processos mais rápidos
+
+==================================================
+
+NOSSA HISTÓRIA
+
+O CERES AI nasceu durante o haCARthon 2026.
+
+Inspirado em Ceres, a deusa romana da agricultura, o projeto conecta Inteligência Artificial, geotecnologia e sustentabilidade para tornar o Cadastro Ambiental Rural mais simples, acessível e eficiente.
+
+CERES significa:
+
+Cadastro Estratégico para Regularização e Eficiência Sustentável.
+
+AI significa Artificial Intelligence.
+
+==================================================
+
+MISSÃO
+
+Democratizar o acesso à informação ambiental por meio da tecnologia.
+
+==================================================
+
+VISÃO
+
+Ser referência nacional em inteligência ambiental aplicada à gestão pública e regularização ambiental.
+
+==================================================
+
+VALORES
+
+* Sustentabilidade
+* Transparência
+* Ética
+* Inovação
+* Inclusão Digital
+* Acessibilidade
+* Responsabilidade Ambiental
+
+==================================================
+
+EQUIPE
+
+Jasmine de Sá Araújo
+Co-Founder & CEO
+
+Pedro Henrique Bento Martins
+Co-Founder & CTO
+
+==================================================
+
+RODAPÉ
+
+🌱 CERES AI
+
+Seu CAR mais simples, inteligente e acessível.
+
+Desenvolvido para o haCARthon 2026.
+
+==================================================
+
+DIRETRIZ DE DESIGN
+
+* Visual GovTech moderno
+* Verde escuro + verde agrícola + azul tecnológico
+* Cards premium
+* Ícones modernos
+* Responsivo
+* Aparência de startup pronta para investimento
+* Foco total na experiência do produtor rural
+* Interface intuitiva para usuários com pouca experiência digital
+
+OBJETIVO FINAL:
+
+Criar uma plataforma que pareça pronta para ser adotada pelo SICAR e pelos órgãos ambientais brasileiros.
