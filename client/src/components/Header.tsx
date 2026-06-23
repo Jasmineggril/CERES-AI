@@ -1,8 +1,9 @@
 import { useAuthStatus, useLogout } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Leaf } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useState } from "react";
+import ceresLogo from "@assets/image_1782242804699.png";
 
 export function Header() {
   const { data: user } = useAuthStatus();
@@ -13,22 +14,33 @@ export function Header() {
   if (!user) {
     return (
       <header className="bg-card border-b border-border/50 sticky top-0 z-40 backdrop-blur-sm">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-foreground">CERES AI</span>
-          </div>
+        <div className="px-6 py-3 flex items-center justify-between">
+          <button
+            onClick={() => setLocation("/")}
+            className="flex items-center gap-2 group"
+            data-testid="button-header-logo"
+            aria-label="Voltar para página inicial"
+          >
+            <img
+              src={ceresLogo}
+              alt="CERES AI"
+              className="h-9 w-auto group-hover:scale-105 transition-transform"
+            />
+          </button>
           <div className="flex gap-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setLocation("/login")}
               data-testid="button-login"
             >
               Entrar
             </Button>
-            <Button onClick={() => setLocation("/signup")} data-testid="button-signup">
+            <Button
+              size="sm"
+              onClick={() => setLocation("/signup")}
+              data-testid="button-signup"
+            >
               Cadastro
             </Button>
           </div>
@@ -39,14 +51,20 @@ export function Header() {
 
   return (
     <header className="bg-card border-b border-border/50 sticky top-0 z-40 backdrop-blur-sm">
-      <div className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
-            <Leaf className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-xl text-foreground">CERES AI</span>
-        </div>
-        
+      <div className="px-6 py-3 flex items-center justify-between">
+        <button
+          onClick={() => setLocation("/")}
+          className="flex items-center gap-2 group"
+          data-testid="button-header-logo"
+          aria-label="Voltar para página inicial"
+        >
+          <img
+            src={ceresLogo}
+            alt="CERES AI"
+            className="h-9 w-auto group-hover:scale-105 transition-transform"
+          />
+        </button>
+
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
@@ -64,20 +82,21 @@ export function Header() {
                 <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
               <button
-                onClick={() => {
-                  setLocation("/admin");
-                  setShowMenu(false);
-                }}
+                onClick={() => { setLocation("/"); setShowMenu(false); }}
+                className="w-full text-left px-4 py-2 hover:bg-secondary/50 text-sm"
+                data-testid="button-home-menu"
+              >
+                Página Inicial
+              </button>
+              <button
+                onClick={() => { setLocation("/admin"); setShowMenu(false); }}
                 className="w-full text-left px-4 py-2 hover:bg-secondary/50 text-sm"
                 data-testid="button-admin-menu"
               >
                 Painel Admin
               </button>
               <button
-                onClick={() => {
-                  logout.mutate();
-                  setShowMenu(false);
-                }}
+                onClick={() => { logout.mutate(); setShowMenu(false); }}
                 className="w-full text-left px-4 py-2 hover:bg-destructive/10 text-sm text-destructive flex items-center gap-2"
                 data-testid="button-logout"
               >

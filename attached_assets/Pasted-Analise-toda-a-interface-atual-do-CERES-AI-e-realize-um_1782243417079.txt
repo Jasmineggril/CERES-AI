@@ -1,0 +1,247 @@
+Analise toda a interface atual do CERES AI e realize uma atualização completa para transformar o sistema em uma plataforma GovTech moderna, focada em Inteligência Artificial, Cadastro Ambiental Rural (CAR) e gestão ambiental.
+
+## Rebranding da Interface
+
+Substituir:
+
+"Registro Ambiental Rural"
+
+por:
+
+"Inteligência Ambiental para o Cadastro Rural"
+
+---
+
+## Hero Section
+
+Adicionar no topo da página principal:
+
+Título:
+🌱 CERES AI
+
+Subtítulo:
+Transformando dados ambientais em decisões inteligentes.
+
+Descrição:
+Uma plataforma de Inteligência Artificial desenvolvida para simplificar o Cadastro Ambiental Rural (CAR), apoiar a regularização ambiental e fortalecer a gestão territorial sustentável.
+
+Botões:
+
+* Conhecer a Plataforma
+* Testar Assistente IA
+* Explorar Dashboard
+
+---
+
+## Atualizar Menu Lateral
+
+Substituir menu atual por:
+
+* Dashboard
+* CERES Assistente
+* CERES Maps
+* Diagnóstico CAR
+* Alertas Ambientais
+* CERES Insights
+* Relatórios
+* Configurações
+
+Adicionar ícones modernos para cada item.
+
+---
+
+## Dashboard Executivo
+
+Criar cards principais:
+
+Área Monitorada
+125.430 ha
+
+Cadastros Analisados
+2.431
+
+Conformidade Ambiental
+87%
+
+Alertas Ativos
+23
+
+Municípios Monitorados
+58
+
+Consultas Respondidas pela IA
+14.325
+
+Adicionar gráficos modernos e indicadores visuais.
+
+---
+
+## CERES Assistente
+
+Criar página de chat inteligente.
+
+Exemplos de perguntas:
+
+* O que é Reserva Legal?
+* Como regularizar meu CAR?
+* O que é APP?
+* Minha propriedade possui pendências?
+* Como interpretar meu cadastro?
+
+Interface semelhante ao ChatGPT.
+
+---
+
+## CERES Maps
+
+Criar módulo de mapas interativos.
+
+Exibir:
+
+* APP
+* Reserva Legal
+* Áreas Consolidadas
+* Nascentes
+* Focos de Calor
+* Alertas Ambientais
+* Municípios
+
+Adicionar zoom, filtros e pesquisa.
+
+---
+
+## Diagnóstico CAR
+
+Nova funcionalidade.
+
+Permitir:
+
+* Inserção de dados simulados
+* Identificação de inconsistências
+* Geração de recomendações
+* Sugestão de regularização ambiental
+
+Resultado apresentado em formato visual.
+
+---
+
+## Alertas Ambientais
+
+Substituir alertas genéricos por:
+
+* Foco de calor detectado
+* Possível desmatamento
+* Área próxima à APP
+* Pendência documental
+* Inconsistência cadastral
+* Necessidade de regularização
+
+Adicionar níveis:
+
+* Baixo
+* Médio
+* Alto
+* Crítico
+
+---
+
+## CERES Insights
+
+Criar dashboard estratégico para gestores públicos.
+
+Exibir:
+
+* Municípios com mais pendências
+* Evolução dos cadastros
+* Taxa de conformidade
+* Alertas por região
+* Tempo médio de análise
+* Áreas prioritárias
+
+---
+
+## Seção Institucional
+
+Adicionar página "Sobre o CERES AI"
+
+### Nossa História
+
+O CERES AI nasceu durante o haCARthon 2026 com o propósito de transformar o Cadastro Ambiental Rural em uma experiência mais acessível, inteligente e eficiente.
+
+Inspirado em Ceres, a deusa romana da agricultura, o projeto conecta Inteligência Artificial, geotecnologia e sustentabilidade para apoiar produtores rurais e gestores públicos na tomada de decisões ambientais.
+
+### Missão
+
+Democratizar o acesso à informação ambiental por meio da tecnologia e da Inteligência Artificial.
+
+### Visão
+
+Ser referência nacional em inteligência ambiental aplicada à gestão pública.
+
+### Valores
+
+* Sustentabilidade
+* Inovação
+* Transparência
+* Ética
+* Acessibilidade
+* Inclusão Digital
+* Eficiência
+* Responsabilidade Ambiental
+
+---
+
+## Equipe
+
+Adicionar seção Fundadores.
+
+### Jasmine de Sá Araújo
+
+Co-Founder & CEO
+
+Engenharia de Software – Universidade do Distrito Federal (UnDF)
+
+Responsável pela visão estratégica, posicionamento institucional, produto, impacto socioambiental e desenvolvimento do modelo de negócio.
+
+LinkedIn:
+https://www.linkedin.com/in/jasmine-d-7b9ab7187
+
+### Pedro Henrique Bento Martins
+
+Co-Founder & CTO
+
+Engenharia de Software – UNICEPLAC
+
+Responsável pela arquitetura tecnológica, desenvolvimento Full Stack, escalabilidade, segurança e infraestrutura da plataforma.
+
+LinkedIn:
+https://www.linkedin.com/in/pedro-henrique-bento-martins-7b19a733a
+
+---
+
+## Rodapé
+
+Adicionar:
+
+🌱 CERES AI
+
+Transformando dados ambientais em decisões inteligentes.
+
+Desenvolvido para o haCARthon 2026.
+
+Tecnologia, sustentabilidade e inovação para o futuro do Brasil.
+
+---
+
+## Direção Visual
+
+* Verde escuro
+* Verde agrícola
+* Azul tecnológico
+* Branco
+* Estilo GovTech
+* Layout moderno
+* Cards premium
+* Animações suaves
+* Design responsivo
+* Aparência de startup pronta para apresentação a banca avaliadora e investidores.

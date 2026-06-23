@@ -1,0 +1,206 @@
+# Fluxo da Página Inicial - CERES AI
+
+## 1. Hero Section (Primeira Tela)
+
+🌱 CERES AI
+
+### Transformando dados ambientais em decisões inteligentes.
+
+Uma plataforma de Inteligência Artificial desenvolvida para simplificar o Cadastro Ambiental Rural (CAR), apoiar a regularização ambiental e fortalecer a gestão territorial sustentável.
+
+[ Conhecer a Plataforma ]
+
+[ Testar Assistente IA ]
+
+[ Explorar Dashboard ]
+
+📍 Desenvolvido para o haCARthon 2026
+
+---
+
+## 2. O Problema
+
+### O desafio do Cadastro Ambiental Rural
+
+Milhões de propriedades rurais dependem do Cadastro Ambiental Rural para garantir conformidade ambiental e acesso a políticas públicas.
+
+No entanto:
+
+❌ Informações complexas
+
+❌ Dificuldade na interpretação dos dados
+
+❌ Pendências cadastrais
+
+❌ Processos demorados
+
+❌ Baixa acessibilidade
+
+Enquanto isso, gestores públicos precisam analisar grandes volumes de dados para apoiar decisões estratégicas.
+
+---
+
+## 3. Nossa Solução
+
+### Como o CERES AI resolve esse problema
+
+O CERES AI utiliza Inteligência Artificial para transformar dados ambientais complexos em orientações simples, acessíveis e acionáveis.
+
+A plataforma auxilia:
+
+👨‍🌾 Produtores Rurais
+
+🏛️ Gestores Públicos
+
+🌎 Analistas Ambientais
+
+📊 Tomadores de Decisão
+
+---
+
+## 4. Funcionalidades
+
+### 🤖 CERES Assistente
+
+Responde dúvidas sobre:
+
+* CAR
+* APP
+* Reserva Legal
+* Regularização Ambiental
+
+---
+
+### 🗺️ CERES Maps
+
+Visualização inteligente:
+
+* APP
+* Reserva Legal
+* Focos de calor
+* Áreas monitoradas
+* Alertas ambientais
+
+---
+
+### 📋 Diagnóstico CAR
+
+Identifica:
+
+* Pendências
+* Inconsistências
+* Riscos
+* Recomendações
+
+---
+
+### 📈 CERES Insights
+
+Dashboards estratégicos para gestores.
+
+---
+
+## 5. Dashboard Preview
+
+Mostrar números grandes.
+
+125.430 ha
+Área Monitorada
+
+2.431
+Cadastros Analisados
+
+87%
+Conformidade Ambiental
+
+23
+Alertas Ativos
+
+58
+Municípios Monitorados
+
+14.325
+Consultas Respondidas pela IA
+
+---
+
+## 6. Diferenciais
+
+### O que torna o CERES AI único?
+
+✅ Inteligência Artificial
+
+✅ Geotecnologia
+
+✅ Linguagem simplificada
+
+✅ Acessibilidade
+
+✅ Apoio à decisão
+
+✅ Sustentabilidade
+
+✅ GovTech
+
+---
+
+## 7. Nossa História
+
+### De um desafio para uma solução
+
+O CERES AI nasceu durante o haCARthon 2026.
+
+Inspirado em Ceres, a deusa romana da agricultura, o projeto foi criado para unir Inteligência Artificial, georreferenciamento e sustentabilidade, tornando o Cadastro Ambiental Rural mais simples, acessível e eficiente.
+
+---
+
+## 8. Missão, Visão e Valores
+
+### Missão
+
+Democratizar o acesso à informação ambiental por meio da tecnologia.
+
+### Visão
+
+Ser referência nacional em inteligência ambiental aplicada à gestão pública.
+
+### Valores
+
+* Sustentabilidade
+* Inovação
+* Transparência
+* Ética
+* Inclusão Digital
+* Responsabilidade Ambiental
+
+---
+
+## 9. Equipe
+
+### Jasmine de Sá Araújo
+
+Co-Founder & CEO
+
+Engenharia de Software – UnDF
+
+Responsável pela estratégia, produto, impacto socioambiental e desenvolvimento institucional.
+
+---
+
+### Pedro Henrique Bento Martins
+
+Co-Founder & CTO
+
+Engenharia de Software – UNICEPLAC
+
+Responsável pela arquitetura tecnológica, desenvolvimento Full Stack e infraestrutura da plataforma.
+
+---
+
+## 10. Chamada Final
+
+### Tecnologia para proteger o território. Inteligência para preservar o futuro.
+
+O CERES AI conecta Inteligência Artificial, sustentabilidade e gestão pública para transformar o futuro da regularização ambiental no Brasil.
+
+[ Conhecer a Plataforma ]

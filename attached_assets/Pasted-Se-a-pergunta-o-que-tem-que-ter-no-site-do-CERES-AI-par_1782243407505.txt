@@ -1,0 +1,201 @@
+Se a pergunta é **"o que tem que ter no site do CERES AI para parecer uma startup séria e ganhar pontos no haCARthon?"**, eu colocaria exatamente estas seções:
+
+### 🏠 1. Home
+
+* Logo CERES AI
+* Bordão:
+  **"Transformando dados ambientais em decisões inteligentes."**
+* Botão "Conheça a Plataforma"
+* Botão "Testar Assistente IA"
+
+---
+
+### 🌱 2. Nossa História
+
+Conte:
+
+* Como surgiu durante o haCARthon.
+* O problema do CAR.
+* Por que criaram o CERES AI.
+* O impacto esperado.
+
+---
+
+### 🎯 3. Problema
+
+Mostrar:
+
+* Complexidade do CAR.
+* Dificuldade dos produtores.
+* Volume de dados para órgãos públicos.
+* Demora na análise.
+
+Colocar números e estatísticas visuais.
+
+---
+
+### 💡 4. Solução
+
+Explicar:
+
+* O que é o CERES AI.
+* Como usa IA.
+* Como simplifica o SICAR.
+
+---
+
+### ⚙️ 5. Funcionalidades
+
+#### CERES Assistente
+
+IA especializada em CAR.
+
+#### CERES Diagnóstico
+
+Análise automática.
+
+#### CERES Maps
+
+Mapa ambiental.
+
+#### CERES Insights
+
+Dashboard.
+
+#### CERES Acessível
+
+Inclusão digital.
+
+---
+
+### 🗺️ 6. Mapa Interativo
+
+Uma das partes mais importantes.
+
+Mostrar:
+
+* APP
+* Reserva Legal
+* Áreas ambientais
+* Alertas
+
+Mesmo que sejam dados simulados.
+
+---
+
+### 📊 7. Dashboard
+
+Com gráficos:
+
+* Cadastros analisados
+* Pendências encontradas
+* Municípios monitorados
+* Alertas ambientais
+* Área protegida
+
+---
+
+### 🌎 8. Impacto
+
+Mostrar:
+
+✅ Sustentabilidade
+
+✅ Governança
+
+✅ Eficiência pública
+
+✅ Inclusão digital
+
+---
+
+### 🚀 9. Diferenciais
+
+* Inteligência Artificial
+* Georreferenciamento
+* Linguagem simples
+* Acessibilidade
+* GovTech
+
+---
+
+### 👥 10. Equipe
+
+#### Jasmine de Sá Araújo
+
+Co-Founder & CEO
+
+Foto
+
+LinkedIn
+
+Mini bio
+
+---
+
+#### Pedro Henrique Bento Martins
+
+Co-Founder & CTO
+
+Foto
+
+LinkedIn
+
+Mini bio
+
+---
+
+### 🎖️ 11. Missão
+
+> Democratizar o acesso à informação ambiental por meio da tecnologia e da Inteligência Artificial.
+
+---
+
+### 👁️ 12. Visão
+
+> Ser referência nacional em inteligência ambiental aplicada à gestão pública.
+
+---
+
+### 💚 13. Valores
+
+* Sustentabilidade
+* Inovação
+* Transparência
+* Ética
+* Acessibilidade
+* Impacto social
+* Responsabilidade ambiental
+
+---
+
+### 🏆 14. HaCARthon 2026
+
+Uma seção especial:
+
+**Desenvolvido para o haCARthon 2026**
+
+Com logos dos organizadores e explicação do desafio.
+
+---
+
+### 📞 15. Contato
+
+* LinkedIn
+* GitHub
+* E-mail
+* Formulário de contato
+
+---
+
+### ⭐ O que faz banca se apaixonar
+
+No topo da página:
+
+> **CERES AI**
+>
+> *Transformando dados ambientais em decisões inteligentes.*
+>
+> Uma plataforma de Inteligência Artificial criada para simplificar o Cadastro Ambiental Rural, fortalecer a gestão ambiental e apoiar decisões sustentáveis para o futuro do Brasil.
+
+Essa frase resume o projeto inteiro em 10 segundos, que é exatamente o tempo que um avaliador leva para decidir se continua lendo ou não. 🚀🌱🇧🇷

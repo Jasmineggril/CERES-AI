@@ -1,12 +1,13 @@
 import { Link, useLocation } from "wouter";
 import {
-  LayoutDashboard, Radio, Bell, Settings, Leaf,
-  FileText, Map, BarChart3, Home
+  LayoutDashboard, Radio, Bell, Settings,
+  FileText, Map, BarChart3, Home, Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/Header";
 import { Chatbot } from "@/components/Chatbot";
 import { AccessibilityBar } from "@/components/AccessibilityBar";
+import ceresLogo from "@assets/image_1782242804699.png";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,14 +17,15 @@ export function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
 
   const navItems = [
-    { icon: Home,           label: "Início",         href: "/" },
-    { icon: LayoutDashboard,label: "Painel",          href: "/dashboard" },
-    { icon: Map,            label: "CERES Maps",      href: "/maps" },
-    { icon: BarChart3,      label: "CERES Insights",  href: "/insights" },
-    { icon: Bell,           label: "Alertas",         href: "/alerts" },
-    { icon: Radio,          label: "Sensores",        href: "/sensors" },
-    { icon: FileText,       label: "Relatórios",      href: "/reports" },
-    { icon: Settings,       label: "Configurações",   href: "/settings" },
+    { icon: Home,            label: "Início",          href: "/" },
+    { icon: LayoutDashboard, label: "Painel",           href: "/dashboard" },
+    { icon: Map,             label: "CERES Maps",       href: "/maps" },
+    { icon: BarChart3,       label: "CERES Insights",   href: "/insights" },
+    { icon: Trophy,          label: "Comunidade",       href: "/comunidade" },
+    { icon: Bell,            label: "Alertas",          href: "/alerts" },
+    { icon: Radio,           label: "Sensores",         href: "/sensors" },
+    { icon: FileText,        label: "Relatórios",       href: "/reports" },
+    { icon: Settings,        label: "Configurações",    href: "/settings" },
   ];
 
   return (
@@ -32,19 +34,32 @@ export function Layout({ children }: LayoutProps) {
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside className="w-full md:w-64 bg-card border-r border-border/50 flex flex-col sticky top-0 md:h-screen z-20">
-          <div className="p-5 flex items-center gap-3 border-b border-border/30">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-900/10">
-              <Leaf className="w-6 h-6 text-white" />
+          {/* Logo — clicável para home */}
+          <Link href="/">
+            <div
+              className="p-4 flex items-center gap-3 border-b border-border/30 cursor-pointer hover:bg-secondary/30 transition-colors group"
+              data-testid="button-sidebar-logo"
+              title="Voltar à página inicial"
+            >
+              <img
+                src={ceresLogo}
+                alt="CERES AI"
+                className="h-10 w-auto group-hover:scale-105 transition-transform"
+              />
+              <div>
+                <h1 className="font-display font-bold text-base leading-none tracking-tight">CERES AI</h1>
+                <p className="text-xs text-muted-foreground mt-0.5 font-medium leading-snug">
+                  Inteligência Ambiental
+                  <br />para o Cadastro Rural
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-display font-bold text-xl leading-none tracking-tight">CERES AI</h1>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">Registro Ambiental Rural</p>
-            </div>
-          </div>
+          </Link>
 
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
-              const isActive = location === item.href ||
+              const isActive =
+                location === item.href ||
                 (item.href !== "/" && location.startsWith(item.href));
               return (
                 <Link key={item.href} href={item.href}>
@@ -55,12 +70,14 @@ export function Layout({ children }: LayoutProps) {
                         ? "bg-primary/10 text-primary font-semibold"
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     )}
-                    data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, "-")}`}
+                    data-testid={`nav-${item.href.replace("/", "") || "inicio"}`}
                   >
                     <item.icon
                       className={cn(
                         "w-5 h-5 transition-transform group-hover:scale-110 shrink-0",
-                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground group-hover:text-foreground"
                       )}
                     />
                     <span className="text-sm">{item.label}</span>
@@ -81,7 +98,7 @@ export function Layout({ children }: LayoutProps) {
             <p className="text-xs text-muted-foreground">
               Monitorando o Cerrado Brasileiro.
               <br />
-              haCARthon 2026
+              <span className="text-primary/70 font-medium">haCARthon 2026</span>
             </p>
           </div>
         </aside>

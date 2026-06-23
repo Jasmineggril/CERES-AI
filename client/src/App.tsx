@@ -14,6 +14,7 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import CeresMaps from "@/pages/CeresMaps";
 import CeresInsights from "@/pages/CeresInsights";
+import Gamificacao from "@/pages/Gamificacao";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/admin" component={Admin} />
       <Route path="/maps" component={CeresMaps} />
       <Route path="/insights" component={CeresInsights} />
+      <Route path="/comunidade" component={Gamificacao} />
       <Route path="/settings" component={() => <div className="p-8 text-center text-muted-foreground">Página de Configurações em Desenvolvimento</div>} />
       <Route component={NotFound} />
     </Switch>

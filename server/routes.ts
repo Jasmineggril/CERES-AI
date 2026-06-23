@@ -160,11 +160,60 @@ export async function registerRoutes(
     res.json(alert);
   });
 
-  // Gamification
+  // Gamification — user stats
+  app.get("/api/user-stats/me", async (req, res) => {
+    const session = (req as any).session;
+    if (!session) return res.status(401).json({ message: "Not authenticated" });
+    let stats = await storage.getUserStats(session.userId);
+    if (!stats) {
+      stats = await storage.createUserStats({ userId: session.userId, points: 0, level: 1, denunciasCount: 0, achievement: "iniciante" });
+    }
+    res.json(stats);
+  });
+
+  app.get("/api/user-stats/:userId", async (req, res) => {
+    const stats = await storage.getUserStats(Number(req.params.userId));
+    if (!stats) return res.status(404).json({ message: "Stats not found" });
+    res.json(stats);
+  });
+
   app.post("/api/user-stats/:userId/add-points", async (req, res) => {
     const { points } = req.body;
     const updated = await storage.addPoints(Number(req.params.userId), points);
     res.json(updated || { error: "User not found" });
+  });
+
+  // Denúncias
+  app.get("/api/denuncias", async (req, res) => {
+    const items = await storage.getDenuncias();
+    res.json(items);
+  });
+
+  app.post("/api/denuncias", async (req, res) => {
+    try {
+      const session = (req as any).session;
+      const data = req.body;
+      if (!data.titulo || !data.descricao || !data.categoria) {
+        return res.status(400).json({ message: "Campos obrigatórios: titulo, descricao, categoria" });
+      }
+      const denuncia = await storage.createDenuncia({
+        ...data,
+        userId: session?.userId ?? null,
+      });
+      // Award points if authenticated
+      if (session?.userId) {
+        let stats = await storage.getUserStats(session.userId);
+        if (!stats) {
+          await storage.createUserStats({ userId: session.userId, points: 50, level: 1, denunciasCount: 1, achievement: "iniciante" });
+        } else {
+          await storage.addPoints(session.userId, 50);
+          await storage.incrementDenuncias(session.userId);
+        }
+      }
+      res.status(201).json(denuncia);
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao criar denúncia" });
+    }
   });
 
   await seedDatabase();

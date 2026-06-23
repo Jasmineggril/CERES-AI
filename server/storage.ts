@@ -1,8 +1,9 @@
 import { db } from "./db";
 import {
-  users, sensors, readings, alerts, weatherData, userStats,
+  users, sensors, readings, alerts, weatherData, userStats, denuncias, achievements,
   type InsertSensor, type InsertReading, type InsertAlert, type InsertWeatherData, type InsertUser, type InsertUserStats,
-  type Sensor, type Reading, type Alert, type WeatherData, type User, type UserStats
+  type Sensor, type Reading, type Alert, type WeatherData, type User, type UserStats,
+  type InsertDenuncia, type Denuncia, type InsertAchievement, type Achievement
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -36,6 +37,15 @@ export interface IStorage {
   getUserStats(userId: number): Promise<UserStats | undefined>;
   createUserStats(stats: InsertUserStats): Promise<UserStats>;
   addPoints(userId: number, points: number): Promise<UserStats | undefined>;
+  incrementDenuncias(userId: number): Promise<UserStats | undefined>;
+
+  // Denuncias
+  getDenuncias(userId?: number): Promise<Denuncia[]>;
+  createDenuncia(data: InsertDenuncia): Promise<Denuncia>;
+
+  // Achievements
+  getAchievements(userId: number): Promise<Achievement[]>;
+  createAchievement(data: InsertAchievement): Promise<Achievement>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -142,20 +152,56 @@ export class DatabaseStorage implements IStorage {
   async addPoints(userId: number, points: number): Promise<UserStats | undefined> {
     const current = await this.getUserStats(userId);
     if (!current) return undefined;
-    
     const currentPoints = current.points ?? 0;
     const newPoints = currentPoints + points;
-    const newLevel = Math.floor(newPoints / 100) + 1;
+    const newLevel = newPoints >= 1000 ? 5 : newPoints >= 500 ? 4 : newPoints >= 300 ? 3 : newPoints >= 100 ? 2 : 1;
     let achievement = "iniciante";
-    if (newPoints >= 500) achievement = "herói";
+    if (newPoints >= 1000) achievement = "mestre";
+    else if (newPoints >= 500) achievement = "herói";
     else if (newPoints >= 300) achievement = "guardião";
     else if (newPoints >= 100) achievement = "protetor";
-
     const [updated] = await db.update(userStats)
       .set({ points: newPoints, level: newLevel, achievement, lastActivity: new Date() })
       .where(eq(userStats.userId, userId))
       .returning();
     return updated;
+  }
+
+  async incrementDenuncias(userId: number): Promise<UserStats | undefined> {
+    const current = await this.getUserStats(userId);
+    if (!current) return undefined;
+    const [updated] = await db.update(userStats)
+      .set({ denunciasCount: (current.denunciasCount ?? 0) + 1, lastActivity: new Date() })
+      .where(eq(userStats.userId, userId))
+      .returning();
+    return updated;
+  }
+
+  // Denúncias
+  async getDenuncias(userId?: number): Promise<Denuncia[]> {
+    if (userId) {
+      return await db.select().from(denuncias)
+        .where(eq(denuncias.userId, userId))
+        .orderBy(desc(denuncias.createdAt));
+    }
+    return await db.select().from(denuncias).orderBy(desc(denuncias.createdAt));
+  }
+
+  async createDenuncia(data: InsertDenuncia): Promise<Denuncia> {
+    const [d] = await db.insert(denuncias).values(data).returning();
+    return d;
+  }
+
+  // Achievements
+  async getAchievements(userId: number): Promise<Achievement[]> {
+    return await db.select().from(achievements)
+      .where(eq(achievements.userId, userId))
+      .orderBy(desc(achievements.earnedAt));
+  }
+
+  async createAchievement(data: InsertAchievement): Promise<Achievement> {
+    const [a] = await db.insert(achievements).values(data).returning();
+    return a;
   }
 }
 
