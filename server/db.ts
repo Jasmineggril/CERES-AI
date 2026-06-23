@@ -4,20 +4,24 @@ import * as schema from "@shared/schema";
 
 const { Pool } = pg;
 
-// Construct DATABASE_URL from individual PG* environment variables if needed
 const getDatabaseUrl = (): string => {
-  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("://")) {
-    return process.env.DATABASE_URL;
+  const url = process.env.DATABASE_URL || "";
+  // Skip Supabase URLs that are unreachable from this environment
+  if (url.includes("supabase.co")) {
+    const host = process.env.PGHOST || "localhost";
+    const port = process.env.PGPORT || "5432";
+    const user = process.env.PGUSER || "postgres";
+    const password = process.env.PGPASSWORD || "";
+    const database = process.env.PGDATABASE || "postgres";
+    return `postgresql://${user}:${encodeURIComponent(password)}@${host}:${port}/${database}`;
   }
-  
-  // Fall back to constructing from individual variables
+  if (url.includes("://")) return url;
   const host = process.env.PGHOST || "localhost";
   const port = process.env.PGPORT || "5432";
   const user = process.env.PGUSER || "postgres";
-  const password = process.env.PGPASSWORD || "password";
+  const password = process.env.PGPASSWORD || "";
   const database = process.env.PGDATABASE || "postgres";
-  
-  return `postgresql://${user}:${password}@${host}:${port}/${database}`;
+  return `postgresql://${user}:${encodeURIComponent(password)}@${host}:${port}/${database}`;
 };
 
 const databaseUrl = getDatabaseUrl();

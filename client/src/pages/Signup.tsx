@@ -54,12 +54,12 @@ export default function Signup() {
               <Leaf className="w-6 h-6 text-white" />
             </div>
             <div className="ml-3">
-              <h1 className="font-display font-bold text-2xl">FlorestAI</h1>
+              <h1 className="font-display font-bold text-2xl">CERES AI</h1>
             </div>
           </div>
 
           <h2 className="text-2xl font-bold font-display text-foreground mb-2">Criar Conta</h2>
-          <p className="text-muted-foreground mb-6">Cadastre-se para monitorar a floresta</p>
+          <p className="text-muted-foreground mb-6">Cadastre-se para acessar o sistema CAR</p>
 
           {error && (
             <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/50 text-destructive text-sm mb-6">

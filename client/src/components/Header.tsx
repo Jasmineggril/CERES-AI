@@ -18,7 +18,7 @@ export function Header() {
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
               <Leaf className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-xl text-foreground">FlorestAI</span>
+            <span className="font-bold text-xl text-foreground">CERES AI</span>
           </div>
           <div className="flex gap-2">
             <Button
@@ -44,7 +44,7 @@ export function Header() {
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
             <Leaf className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-xl text-foreground">FlorestAI</span>
+          <span className="font-bold text-xl text-foreground">CERES AI</span>
         </div>
         
         <div className="relative">

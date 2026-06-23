@@ -30,8 +30,8 @@ export function Layout({ children }: LayoutProps) {
             <Leaf className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-xl leading-none tracking-tight">FlorestAI</h1>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">Monitoramento Ambiental</p>
+            <h1 className="font-display font-bold text-xl leading-none tracking-tight">CERES AI</h1>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">Registro Ambiental Rural</p>
           </div>
         </div>
 

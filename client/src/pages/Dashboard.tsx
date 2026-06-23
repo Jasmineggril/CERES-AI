@@ -64,7 +64,7 @@ export default function Dashboard() {
     <Layout>
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-display text-foreground">FlorestAI - Painel de Monitoramento</h1>
+          <h1 className="text-3xl font-bold font-display text-foreground">CERES AI - Painel de Monitoramento</h1>
           <p className="text-muted-foreground mt-2 font-medium">Análise Preditiva de Focos no Cerrado Brasileiro</p>
         </div>
         <button 

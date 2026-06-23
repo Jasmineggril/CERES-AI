@@ -16,7 +16,7 @@ const CHATBOT_RESPONSES: { [key: string]: string } = {
   "risco": "O sistema analisa dados climáticos e históricos para identificar áreas de risco. Consulte o Dashboard para ver a análise.",
   "prevenção": "Para prevenir incêndios: não faça queimadas sem licença, evite fogo em dias secos e ventosos, e reporte comportamentos suspeitos.",
   "contato": "Para emergências, contact o Corpo de Bombeiros (193) ou o ICMBio (ICMBio Cerrado).",
-  "default": "Olá! Sou o assistente FlorestAI. Posso ajudá-lo com dúvidas sobre prevenção de incêndios, como fazer denúncias, ou entender alertas. Como posso ajudar?"
+  "default": "Olá! Sou o assistente CERES AI. Posso ajudá-lo com dúvidas sobre o CAR, prevenção de incêndios, denúncias ou alertas ambientais. Como posso ajudar?"
 };
 
 export function Chatbot() {
@@ -71,7 +71,7 @@ export function Chatbot() {
         <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-lg shadow-2xl flex flex-col z-40 border border-emerald-100">
           {/* Header */}
           <div className="bg-emerald-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-            <h3 className="font-bold text-lg">FlorestAI Assistant</h3>
+            <h3 className="font-bold text-lg">CERES AI Assistente</h3>
             <button
               onClick={() => setIsOpen(false)}
               className="p-1 hover:bg-emerald-700 rounded"

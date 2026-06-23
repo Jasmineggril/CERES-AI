@@ -1,8 +1,8 @@
-# FlorestAI - Environmental Monitoring System
+# CERES AI - Cadastro Estratégico para Regularização e Eficiência Sustentável com Inteligência Artificial
 
 ## Overview
 
-FlorestAI is a full-stack environmental monitoring application designed for the Brazilian Cerrado biome. It provides real-time sensor data tracking, weather monitoring, and fire alert management for forest conservation efforts. The application features a React frontend with a nature-inspired UI theme and an Express backend with PostgreSQL database storage.
+CERES AI is a full-stack environmental monitoring platform designed for the Brazilian Cerrado biome. It makes the Rural Environmental Registry (CAR) more accessible and intelligent for rural producers, technicians, and public managers. The platform provides real-time sensor data tracking, fire hotspot monitoring, weather monitoring, fire alert management, geolocated fire reports (denúncias), gamification, and an AI chatbot assistant — all in Brazilian Portuguese. Features a React frontend with a nature-inspired UI theme and an Express backend with PostgreSQL database storage.
 
 ## User Preferences
 
