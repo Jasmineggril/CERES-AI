@@ -1,0 +1,211 @@
+# 🌱 CERES AI
+
+## Seu CAR mais simples, inteligente e acessível.
+
+### Transformando dados ambientais em decisões inteligentes.
+
+> O CERES AI nasceu durante o haCARthon 2026 com uma missão clara: tornar o Cadastro Ambiental Rural (CAR) mais simples, acessível e compreensível para milhões de produtores rurais brasileiros.
+
+Enquanto produtores enfrentam dificuldades para interpretar legislações ambientais, corrigir pendências e compreender informações técnicas, órgãos públicos lidam com retrabalho, inconsistências cadastrais e processos complexos de regularização.
+
+O CERES AI utiliza Inteligência Artificial para transformar burocracia em orientação, dados em decisões e dúvidas em soluções.
+
+---
+
+## 🏆 Desenvolvido para o haCARthon 2026
+
+O haCARthon é uma maratona nacional de inovação voltada ao fortalecimento do Sistema de Cadastro Ambiental Rural (SICAR) e à consolidação do Cadastro Ambiental Rural (CAR) como um Bem Público Digital.
+
+O CERES AI foi criado para atender diretamente aos desafios de:
+
+* Simplificação do Cadastro Ambiental Rural;
+* Ampliação do entendimento da legislação ambiental;
+* Inclusão digital de produtores rurais;
+* Apoio à regularização ambiental;
+* Modernização da gestão pública.
+
+---
+
+## 🎯 O Problema
+
+O Cadastro Ambiental Rural é uma das principais ferramentas de gestão ambiental do Brasil.
+
+Porém, muitos produtores rurais enfrentam dificuldades para:
+
+* Entender APPs e Reservas Legais;
+* Interpretar mapas ambientais;
+* Corrigir inconsistências cadastrais;
+* Compreender notificações dos órgãos ambientais;
+* Acessar informações em linguagem acessível.
+
+Ao mesmo tempo, analistas ambientais precisam lidar com grandes volumes de dados, retrabalho e processos demorados.
+
+---
+
+## 💡 Nossa Solução
+
+O CERES AI atua como um assistente inteligente de regularização ambiental.
+
+A plataforma combina Inteligência Artificial, geotecnologia e experiência do usuário para transformar informações complexas em orientações simples e acionáveis.
+
+### O usuário entende.
+
+### O sistema orienta.
+
+### O produtor regulariza.
+
+---
+
+## 🚀 Funcionalidades
+
+### 🤖 CERES Assistente
+
+Conversa com o usuário em linguagem simples sobre:
+
+* CAR
+* APP
+* Reserva Legal
+* Código Florestal
+* Regularização Ambiental
+
+---
+
+### 📋 CERES Diagnóstico
+
+Analisa informações cadastrais e identifica:
+
+* Pendências
+* Inconsistências
+* Riscos
+* Recomendações
+
+---
+
+### 🗺️ CERES Maps
+
+Visualização geoespacial de:
+
+* APPs
+* Reservas Legais
+* Nascentes
+* Áreas Consolidadas
+* Alertas Ambientais
+
+---
+
+### 📚 CERES Aprende
+
+Centro de conhecimento com:
+
+* Guias rápidos
+* Glossário ambiental
+* Perguntas frequentes
+* Explicações simplificadas da legislação
+
+---
+
+### 📊 CERES Insights
+
+Painel estratégico para:
+
+* Analistas ambientais
+* Gestores públicos
+* Equipes de regularização ambiental
+
+---
+
+## 👨‍🌾 Quem se beneficia?
+
+### Seu Raimundo
+
+Pequeno e médio produtor rural.
+
+Precisa manter sua propriedade regularizada, acessar crédito rural e compreender melhor suas obrigações ambientais.
+
+### Luana
+
+Analista ambiental.
+
+Responsável por apoiar a regularização ambiental e analisar informações do CAR.
+
+---
+
+## 🌎 Impacto Esperado
+
+* Redução de erros cadastrais;
+* Menos retrabalho para órgãos ambientais;
+* Maior compreensão da legislação ambiental;
+* Mais acesso à regularização;
+* Melhoria da qualidade dos dados ambientais;
+* Inclusão digital no campo.
+
+---
+
+## 🔓 Bem Público Digital
+
+O CERES AI foi concebido para evoluir seguindo princípios de:
+
+* Código Aberto;
+* Interoperabilidade;
+* Escalabilidade;
+* Transparência;
+* Reutilização por órgãos públicos.
+
+---
+
+## 👥 Equipe
+
+### Jasmine de Sá Araújo
+
+**Co-Founder & CEO**
+
+Engenharia de Software — Universidade do Distrito Federal (UnDF)
+
+Responsável pela estratégia, produto, impacto socioambiental e desenvolvimento institucional.
+
+### Pedro Henrique Bento Martins
+
+**Co-Founder & CTO**
+
+Engenharia de Software — UNICEPLAC
+
+Responsável pela arquitetura tecnológica, desenvolvimento Full Stack, segurança e escalabilidade da plataforma.
+
+---
+
+## 🛣️ Roadmap
+
+### Fase 1 — MVP (haCARthon 2026)
+
+* Assistente IA
+* Diagnóstico CAR
+* CERES Maps
+* CERES Aprende
+* Dashboard Inicial
+
+### Fase 2 — Expansão
+
+* Assistente por voz
+* Relatórios inteligentes
+* Integração com bases públicas
+* Modo Offline
+
+### Fase 3 — GovTech
+
+* Integração com SICAR
+* APIs abertas
+* Ferramentas para órgãos ambientais
+
+### Fase 4 — Bem Público Digital
+
+* Plataforma Open Source
+* Arquitetura modular
+* Expansão nacional e internacional
+
+---
+
+# 🌱 CERES AI
+
+## Menos burocracia. Mais inteligência ambiental.
+
+### Seu CAR mais simples, inteligente e acessível.

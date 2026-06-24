@@ -1,0 +1,189 @@
+ATUE COMO UMA BANCA AVALIADORA DO HACARTHON 2026 E REALIZE UMA REVISÃO COMPLETA DO CERES AI.
+
+OBJETIVO:
+
+Transformar o projeto em uma solução com aparência de finalista e potencial de premiação.
+
+NÃO adicionar funcionalidades aleatórias.
+
+FOCAR em:
+
+* Clareza da proposta
+* Experiência do usuário
+* Demonstração de impacto
+* Alinhamento ao edital
+* Comunicação visual
+* Storytelling
+
+==================================================
+
+ETAPA 1 — AUDITORIA COMPLETA
+
+Analise:
+
+* Home
+* Navegação
+* Dashboard
+* CERES Assistente
+* CERES Diagnóstico
+* CERES Maps
+* CERES Aprende
+* CERES Insights
+* Equipe
+* Roadmap
+* README
+
+Identifique:
+
+* Informações redundantes
+* Informações confusas
+* Textos excessivamente técnicos
+* Falhas de UX
+* Elementos sem propósito
+
+Corrija automaticamente.
+
+==================================================
+
+ETAPA 2 — ALINHAMENTO AO HACARTHON
+
+Garantir que toda a plataforma demonstre claramente:
+
+DESAFIO 1
+Simplificação do Cadastro Ambiental Rural
+
+DESAFIO 3
+Compreensão da legislação ambiental
+
+Adicionar referências visuais e textuais ao problema real dos usuários.
+
+==================================================
+
+ETAPA 3 — PERSONAS
+
+Destacar claramente:
+
+👨‍🌾 Seu Raimundo
+
+Pequeno produtor rural.
+
+🏛️ Luana
+
+Analista ambiental.
+
+Mostrar como cada funcionalidade ajuda cada persona.
+
+==================================================
+
+ETAPA 4 — DEMONSTRAÇÃO DE VALOR
+
+Adicionar seção:
+
+"Como o CERES AI ajuda"
+
+Fluxo:
+
+Entender
+↓
+Diagnosticar
+↓
+Corrigir
+↓
+Regularizar
+↓
+Acompanhar
+
+==================================================
+
+ETAPA 5 — INTELIGÊNCIA ARTIFICIAL
+
+Garantir que a IA seja protagonista.
+
+O usuário deve entender em menos de 10 segundos:
+
+* Onde está a IA
+* Como ela funciona
+* Qual problema ela resolve
+
+Adicionar exemplos reais de interação.
+
+==================================================
+
+ETAPA 6 — IMPACTO
+
+Adicionar métricas visuais.
+
+Exemplo:
+
+* Menos erros cadastrais
+* Menos retrabalho
+* Mais acesso à informação
+* Mais eficiência para órgãos ambientais
+
+==================================================
+
+ETAPA 7 — STORYTELLING
+
+A plataforma deve contar uma história:
+
+Problema
+↓
+Dificuldade do produtor
+↓
+Solução
+↓
+Benefícios
+↓
+Impacto
+
+==================================================
+
+ETAPA 8 — ACABAMENTO VISUAL
+
+Revisar:
+
+* Espaçamentos
+* Responsividade
+* Tipografia
+* Contraste
+* Hierarquia visual
+* Ícones
+* Botões
+
+Objetivo:
+
+Aparência de startup GovTech pronta para apresentação ao governo.
+
+==================================================
+
+ETAPA 9 — README
+
+Transformar o README em documentação de nível profissional.
+
+Priorizar:
+
+* História
+* Problema
+* Solução
+* Funcionalidades
+* Impacto
+* Roadmap
+* Equipe
+
+==================================================
+
+ETAPA 10 — ENTREGA FINAL
+
+Após todas as melhorias:
+
+Gerar um relatório informando:
+
+1. O que foi alterado.
+2. O que foi removido.
+3. O que foi melhorado.
+4. Qual seria a nota estimada do projeto perante uma banca do haCARthon.
+5. O que ainda poderia ser feito após o hackathon.
+
+NÃO adicionar funcionalidades desnecessárias.
+
+FOCO TOTAL EM PREMIAÇÃO, CLAREZA E IMPACTO.
