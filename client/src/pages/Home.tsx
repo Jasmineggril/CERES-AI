@@ -162,18 +162,18 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left */}
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-8 border" style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.15)", color: "#81C784" }}>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-8 border" style={{ background: "rgba(255,255,255,0.12)", borderColor: "rgba(255,255,255,0.2)", color: "#d4ffd4" }}>
                 <Star className="w-3.5 h-3.5 text-amber-400" />
                 haCARthon 2026 · GovTech para o CAR
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white leading-[1.08] mb-6">
                 Seu CAR<br />mais simples,<br />
-                <span style={{ color: "#81C784" }}>inteligente</span><br />
+                <span style={{ color: "#a8f5c0" }}>inteligente</span><br />
                 e acessível.
               </h1>
 
-              <p className="text-green-200 text-lg leading-relaxed mb-10 max-w-md">
+              <p className="text-white/85 text-lg leading-relaxed mb-10 max-w-md">
                 CERES AI transforma dados técnicos do Cadastro Ambiental Rural em orientações simples e acionáveis, usando Inteligência Artificial para qualquer produtor rural.
               </p>
 
@@ -185,13 +185,13 @@ export default function Home() {
                   Criar conta gratuita
                 </button>
                 <button onClick={() => scrollTo("como-funciona")}
-                  className="px-7 py-3.5 text-white font-bold rounded-xl transition-all text-sm flex items-center gap-2 border border-white/20 hover:bg-white/10"
+                  className="px-7 py-3.5 text-white font-bold rounded-xl transition-all text-sm flex items-center gap-2 border border-white/30 hover:bg-white/10"
                   data-testid="button-hero-ver">
                   Ver como funciona <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 mt-10 text-green-300 text-sm">
+              <div className="flex items-center gap-2 mt-10 text-white/60 text-sm">
                 <Lock className="w-3.5 h-3.5" />
                 <span>Acesso seguro · Dados protegidos · LGPD</span>
               </div>
@@ -259,7 +259,7 @@ export default function Home() {
             ].map((s, i) => (
               <div key={i} className="text-center py-6 px-4" style={{ background: "rgba(0,0,0,0.15)" }}>
                 <div className="text-2xl font-bold text-white font-display">{s.n}</div>
-                <div className="text-xs mt-1" style={{ color: "#81C784" }}>{s.label}</div>
+                <div className="text-xs mt-1 text-white/70">{s.label}</div>
               </div>
             ))}
           </div>
@@ -489,11 +489,11 @@ export default function Home() {
       <section className="py-24" style={{ background: "#0F5132" }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-widest" style={{ background: "rgba(255,255,255,0.15)", color: "#81C784" }}>Impacto Esperado</span>
+            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-widest" style={{ background: "rgba(255,255,255,0.18)", color: "#d4ffd4" }}>Impacto Esperado</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-display text-white mb-5">
               Resultados que<br />transformam
             </h2>
-            <p className="text-green-200 text-lg max-w-2xl mx-auto">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto">
               Métricas projetadas com base no potencial de adoção da plataforma em escala nacional.
             </p>
           </div>
@@ -511,11 +511,11 @@ export default function Home() {
               { icon: <ShieldCheck className="w-6 h-6" />, t: "Governança", d: "Dados mais confiáveis para políticas públicas ambientais" },
             ].map((c, i) => (
               <div key={i} className="rounded-2xl p-6 border border-white/10" style={{ background: "rgba(255,255,255,0.07)" }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.1)", color: "#81C784" }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white" style={{ background: "rgba(255,255,255,0.15)" }}>
                   {c.icon}
                 </div>
                 <h4 className="font-bold text-white mb-2">{c.t}</h4>
-                <p className="text-green-200 text-sm leading-relaxed">{c.d}</p>
+                <p className="text-white/75 text-sm leading-relaxed">{c.d}</p>
               </div>
             ))}
           </div>
@@ -869,7 +869,7 @@ export default function Home() {
       <section className="py-24" style={{ background: "#0F5132" }}>
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-widest" style={{ background: "rgba(255,255,255,0.15)", color: "#81C784" }}>Roadmap CERES AI</span>
+            <span className="inline-block px-3 py-1 text-xs font-bold rounded-full mb-4 uppercase tracking-widest" style={{ background: "rgba(255,255,255,0.18)", color: "#d4ffd4" }}>Roadmap CERES AI</span>
             <h2 className="text-3xl md:text-4xl font-bold font-display text-white mb-5">
               Do MVP ao Bem Público Digital
             </h2>
@@ -884,11 +884,11 @@ export default function Home() {
             ].map((fase, i) => (
               <div key={i} className="rounded-2xl p-6 border border-white/10" style={{ background: fase.active ? "rgba(201,162,39,0.2)" : "rgba(255,255,255,0.07)" }}>
                 <div className="text-xl font-bold font-display mb-1" style={{ color: fase.active ? "#C9A227" : "white" }}>{fase.ano}</div>
-                <p className="text-green-300 text-xs font-bold mb-4 uppercase tracking-wider">{fase.fase}</p>
+                <p className="text-white/60 text-xs font-bold mb-4 uppercase tracking-wider">{fase.fase}</p>
                 <ul className="space-y-2">
                   {fase.items.map((item, j) => (
-                    <li key={j} className="text-xs text-green-200 flex items-center gap-1.5">
-                      <div className="w-1 h-1 rounded-full bg-green-400 flex-shrink-0" />
+                    <li key={j} className="text-xs text-white/75 flex items-center gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-white/50 flex-shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -938,7 +938,7 @@ export default function Home() {
               <img src={ceresLogo} alt="CERES AI" className="h-12 w-auto" />
               <div>
                 <p className="text-white font-bold text-base font-display">CERES AI</p>
-                <p className="text-sm" style={{ color: "#81C784" }}>Seu CAR mais simples, inteligente e acessível.</p>
+                <p className="text-sm text-white/70">Seu CAR mais simples, inteligente e acessível.</p>
                 <p className="text-xs text-gray-500 mt-1">haCARthon 2026</p>
               </div>
             </div>
