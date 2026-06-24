@@ -92,6 +92,13 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [activeChatDemo, setActiveChatDemo] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -102,11 +109,11 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans scroll-smooth">
 
       {/* ─── NAVBAR ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/96 backdrop-blur-md border-b border-gray-100">
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/97 backdrop-blur-md border-b border-gray-100 shadow-sm" : "bg-transparent border-b border-white/10"}`}>
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-3 flex items-center justify-between">
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3 group" data-testid="button-logo-home">
             <img src={ceresLogo} alt="CERES AI" className="h-9 w-auto" />
-            <span className="font-display font-bold text-gray-900 text-base hidden sm:block">CERES AI</span>
+            <span className={`font-display font-bold text-base hidden sm:block transition-colors ${scrolled ? "text-gray-900" : "text-white"}`}>CERES AI</span>
           </button>
 
           <div className="hidden md:flex items-center gap-0.5 text-sm">
@@ -117,7 +124,7 @@ export default function Home() {
               { label: "Equipe", id: "equipe" },
             ].map(item => (
               <button key={item.label} onClick={() => scrollTo(item.id)}
-                className="px-3.5 py-2 text-gray-500 hover:text-gray-900 rounded-lg transition-colors text-sm font-medium">
+                className={`px-3.5 py-2 rounded-lg transition-colors text-sm font-medium ${scrolled ? "text-gray-500 hover:text-gray-900" : "text-white/80 hover:text-white"}`}>
                 {item.label}
               </button>
             ))}
@@ -125,30 +132,30 @@ export default function Home() {
 
           <div className="flex items-center gap-2">
             <button onClick={() => setLocation("/login")}
-              className="hidden md:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300 rounded-xl transition-all"
+              className={`hidden md:block px-4 py-2 text-sm font-semibold rounded-xl border transition-all ${scrolled ? "text-gray-700 border-gray-300 hover:border-gray-400 hover:text-gray-900 bg-white" : "text-white border-white/60 hover:border-white hover:bg-white/10"}`}
               data-testid="button-nav-login">
               Entrar
             </button>
             <button onClick={() => setLocation("/signup")}
-              className="px-4 py-2 text-sm font-bold text-white rounded-xl hover:opacity-90 transition-all"
-              style={{ background: "#0F5132" }}
+              className={`px-4 py-2 text-sm font-bold rounded-xl hover:opacity-90 transition-all ${scrolled ? "text-white" : "text-green-900"}`}
+              style={{ background: scrolled ? "#0F5132" : "#d4ffd4" }}
               data-testid="button-nav-signup">
               Criar conta
             </button>
-            <button className="md:hidden p-2 rounded-lg hover:bg-gray-50 transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              <Menu className="w-5 h-5 text-gray-600" />
+            <button className={`md:hidden p-2 rounded-lg transition-colors ${scrolled ? "hover:bg-gray-50" : "hover:bg-white/10"}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              <Menu className={`w-5 h-5 ${scrolled ? "text-gray-600" : "text-white"}`} />
             </button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 bg-white px-5 py-4 space-y-1">
+          <div className="md:hidden border-t border-white/10 bg-[#0F5132] px-5 py-4 space-y-1">
             {[{ label: "Solução", id: "solucao" }, { label: "Como funciona", id: "como-funciona" }, { label: "Por que agora?", id: "por-que" }, { label: "Equipe", id: "equipe" }].map(item => (
-              <button key={item.id} onClick={() => scrollTo(item.id)} className="block w-full text-left px-4 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors text-sm font-medium">{item.label}</button>
+              <button key={item.id} onClick={() => scrollTo(item.id)} className="block w-full text-left px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium">{item.label}</button>
             ))}
-            <div className="pt-2 border-t border-gray-100 flex gap-2">
-              <button onClick={() => setLocation("/login")} className="flex-1 py-2.5 text-sm font-medium border border-gray-200 rounded-xl">Entrar</button>
-              <button onClick={() => setLocation("/signup")} className="flex-1 py-2.5 text-sm font-bold text-white rounded-xl" style={{ background: "#0F5132" }}>Criar conta</button>
+            <div className="pt-2 border-t border-white/10 flex gap-2">
+              <button onClick={() => setLocation("/login")} className="flex-1 py-2.5 text-sm font-semibold text-white border border-white/50 rounded-xl">Entrar</button>
+              <button onClick={() => setLocation("/signup")} className="flex-1 py-2.5 text-sm font-bold text-green-900 rounded-xl" style={{ background: "#d4ffd4" }}>Criar conta</button>
             </div>
           </div>
         )}
