@@ -29,7 +29,9 @@ export async function registerRoutes(
         password: hashPassword(input.password),
       });
 
-      (req as any).session = { userId: user.id, email: user.email, name: user.name };
+      req.session.userId = user.id;
+      req.session.email = user.email;
+      req.session.name = user.name;
       res.status(201).json({ id: user.id, email: user.email, name: user.name });
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -48,7 +50,9 @@ export async function registerRoutes(
         return res.status(401).json({ message: "Email ou senha inválidos" });
       }
 
-      (req as any).session = { userId: user.id, email: user.email, name: user.name };
+      req.session.userId = user.id;
+      req.session.email = user.email;
+      req.session.name = user.name;
       res.json({ id: user.id, email: user.email, name: user.name });
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -59,13 +63,13 @@ export async function registerRoutes(
   });
 
   app.post(api.auth.logout.path, (req, res) => {
-    (req as any).session = null;
+    req.session.destroy(() => {});
     res.json({});
   });
 
   app.get("/api/auth/status", (req, res) => {
-    if ((req as any).session) {
-      res.json((req as any).session);
+    if (req.session?.userId) {
+      res.json({ userId: req.session.userId, email: req.session.email, name: req.session.name });
     } else {
       res.status(401).json({ message: "Not authenticated" });
     }
