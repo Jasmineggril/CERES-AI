@@ -155,11 +155,18 @@ shared/           — Tipos e schemas compartilhados
 # Instalar dependências
 npm install
 
+# Copie o exemplo de variáveis de ambiente para o arquivo .env local
+cp .env.example .env
+
+# Configure DATABASE_URL para sua conexão PostgreSQL local ou Supabase
+# Exemplo Supabase:
+# DATABASE_URL="postgresql://usuario:senha@dbhostname.supabase.co:5432/postgres"
+
 # Iniciar o servidor de desenvolvimento
 npm run dev
 
 # Aplicar migrações do banco
-DATABASE_URL="postgresql://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" npx drizzle-kit push
+npx drizzle-kit push
 ```
 
 ---

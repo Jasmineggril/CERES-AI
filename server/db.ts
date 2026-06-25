@@ -1,21 +1,37 @@
+import fs from "node:fs";
+import path from "node:path";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import * as schema from "@shared/schema";
 
 const { Pool } = pg;
 
-const getDatabaseUrl = (): string => {
-  const url = process.env.DATABASE_URL || "";
-  // Skip Supabase URLs that are unreachable from this environment
-  if (url.includes("supabase.co")) {
-    const host = process.env.PGHOST || "localhost";
-    const port = process.env.PGPORT || "5432";
-    const user = process.env.PGUSER || "postgres";
-    const password = process.env.PGPASSWORD || "";
-    const database = process.env.PGDATABASE || "postgres";
-    return `postgresql://${user}:${encodeURIComponent(password)}@${host}:${port}/${database}`;
+const loadDotenv = () => {
+  const envPath = path.resolve(process.cwd(), ".env");
+  if (!fs.existsSync(envPath)) return;
+
+  for (const rawLine of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+
+    const [key, ...valueParts] = line.split("=");
+    if (!key || valueParts.length === 0) continue;
+
+    const rawValue = valueParts.join("=").trim();
+    const value = rawValue.replace(/^"|"$/g, "");
+
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
   }
+};
+
+const getDatabaseUrl = (): string => {
+  loadDotenv();
+
+  const url = process.env.DATABASE_URL?.trim() || "";
   if (url.includes("://")) return url;
+
   const host = process.env.PGHOST || "localhost";
   const port = process.env.PGPORT || "5432";
   const user = process.env.PGUSER || "postgres";

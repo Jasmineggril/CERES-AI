@@ -18,6 +18,7 @@ import CeresMaps from "@/pages/CeresMaps";
 import CeresInsights from "@/pages/CeresInsights";
 import Gamificacao from "@/pages/Gamificacao";
 import SimulacaoCar from "@/pages/SimulacaoCar";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -61,7 +62,7 @@ function Router() {
       <Route path="/maps" component={() => <ProtectedRoute component={CeresMaps} />} />
       <Route path="/insights" component={() => <ProtectedRoute component={CeresInsights} />} />
       <Route path="/comunidade" component={() => <ProtectedRoute component={Gamificacao} />} />
-      <Route path="/settings" component={() => <ProtectedRoute component={() => <div className="p-8 text-center text-muted-foreground">Configurações em Desenvolvimento</div>} />} />
+      <Route path="/settings" component={() => <ProtectedRoute component={Settings} />} />
       <Route component={NotFound} />
     </Switch>
   );
