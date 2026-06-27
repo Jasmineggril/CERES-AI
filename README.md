@@ -2,6 +2,8 @@
 
 **Seu CAR mais simples, inteligente e acessível.**
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/f5b88641-e0d6-4597-8b7e-9f4ca78b18cd" />
+
 > Transformando dados ambientais em decisões inteligentes.
 
 Desenvolvido para o **haCARthon 2026** — Maratona Nacional de Soluções para o Cadastro Ambiental Rural (CAR), promovida pela ENAP, MGI, FBDS e Governo da Noruega.
@@ -111,8 +113,10 @@ O CERES AI foi concebido seguindo princípios de:
 - **Reutilização** — Modular, adotável por qualquer ente público
 
 Nossa visão é contribuir para a evolução do CAR como um verdadeiro **Bem Público Digital**.
+-------
+<img width="2048" height="2048" alt="instruçoes" src="https://github.com/user-attachments/assets/f0defb79-4273-49e4-a667-84bcd2aa946d" />
 
----
+-------
 
 ## Missão
 
