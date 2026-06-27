@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Bell, Camera, Lock, LogOut, MoonStar, ShieldCheck, Sparkles, SunMedium, UserRound } from "lucide-react";
+import { Bell, Camera, Lock, LogOut, MoonStar, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,6 +14,7 @@ const STORAGE_KEY = "ceres-profile-settings";
 type UserRole = "Produtor Rural" | "Analista Ambiental" | "Gestor Público";
 type LanguagePreference = "simplificada" | "tecnica";
 type AppearancePreference = "claro" | "escuro" | "alto-contraste";
+type SyncMode = "local" | "server";
 
 interface SettingsState {
   fullName: string;
@@ -43,102 +44,108 @@ const createDefaultSettings = (email = "", fullName = ""): SettingsState => ({
   highContrast: false,
 });
 
+function getStoredSettings(storageKey: string, fallback: SettingsState) {
+  if (typeof window === "undefined") return fallback;
+
+  const stored = window.localStorage.getItem(storageKey);
+  if (!stored) return fallback;
+
+  try {
+    const parsed = JSON.parse(stored) as Partial<SettingsState>;
+    return {
+      ...fallback,
+      ...parsed,
+      email: parsed.email || fallback.email,
+      fullName: parsed.fullName || fallback.fullName,
+    };
+  } catch {
+    window.localStorage.removeItem(storageKey);
+    return fallback;
+  }
+}
+
 export default function Settings() {
   const { toast } = useToast();
   const { data: user } = useAuthStatus();
   const logout = useLogout();
-  const [settings, setSettings] = React.useState<SettingsState>(() => createDefaultSettings(user?.email, user?.name));
+  const [settings, setSettings] = React.useState<SettingsState>(() => createDefaultSettings());
   const [isSaving, setIsSaving] = React.useState(false);
-  const [syncMode, setSyncMode] = React.useState<"local" | "supabase">("local");
+  const [syncMode, setSyncMode] = React.useState<SyncMode>("local");
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
-    if (user?.email || user?.name) {
-      setSettings((current) => ({
-        ...current,
-        email: user.email || current.email,
-        fullName: user.name || current.fullName,
-      }));
-    }
+    const storageKey = user?.email ? `${STORAGE_KEY}:${user.email}` : STORAGE_KEY;
+    const baseSettings = createDefaultSettings(user?.email || "", user?.name || "");
+    const storedSettings = getStoredSettings(storageKey, baseSettings);
+
+    setSettings((current) => ({
+      ...baseSettings,
+      ...current,
+      ...storedSettings,
+      email: storedSettings.email || user?.email || current.email,
+      fullName: storedSettings.fullName || user?.name || current.fullName,
+    }));
   }, [user?.email, user?.name]);
 
   React.useEffect(() => {
-    const storageKey = user?.email ? `${STORAGE_KEY}:${user.email}` : STORAGE_KEY;
-    const stored = window.localStorage.getItem(storageKey);
+    if (!user?.email) return;
 
-    if (!stored) return;
+    const loadServerProfile = async () => {
+      try {
+        const response = await fetch("/api/user/profile");
+        if (!response.ok) return;
 
-    try {
-      const parsed = JSON.parse(stored);
-      setSettings((current) => ({
-        ...createDefaultSettings(user?.email || current.email, user?.name || current.fullName),
-        ...current,
-        ...parsed,
-        email: parsed.email || user?.email || current.email,
-        fullName: parsed.fullName || parsed.name || user?.name || current.fullName,
-      }));
-    } catch {
-      window.localStorage.removeItem(storageKey);
-    }
-  }, [user?.email, user?.name]);
+        const payload = await response.json() as {
+          firstName?: string;
+          lastName?: string;
+          email?: string;
+          role?: string;
+          avatar?: string;
+        };
+
+        const fullName = [payload.firstName, payload.lastName].filter(Boolean).join(" ").trim();
+        setSettings((current) => ({
+          ...current,
+          email: payload.email || current.email,
+          fullName: fullName || current.fullName,
+          role: (payload.role as UserRole) || current.role,
+          avatar: payload.avatar || current.avatar,
+        }));
+      } catch {
+        // Mantém o modo local quando o backend não estiver disponível.
+      }
+    };
+
+    void loadServerProfile();
+  }, [user?.email]);
 
   const persistSettings = async (nextSettings: SettingsState) => {
     const storageKey = nextSettings.email ? `${STORAGE_KEY}:${nextSettings.email}` : STORAGE_KEY;
     window.localStorage.setItem(storageKey, JSON.stringify(nextSettings));
 
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
+    const fullNameParts = nextSettings.fullName.trim().split(/\s+/).filter(Boolean);
+    const firstName = fullNameParts.shift() || "";
+    const lastName = fullNameParts.join(" ");
 
-    if (supabaseUrl && supabaseKey && nextSettings.email) {
-      try {
-        const profilePayload = {
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
           email: nextSettings.email,
-          full_name: nextSettings.fullName,
           role: nextSettings.role,
-          state: nextSettings.state,
-          municipality: nextSettings.municipality,
-          avatar_url: nextSettings.avatar,
-        };
+          avatar: nextSettings.avatar || "",
+        }),
+      });
 
-        const notificationPayload = {
-          email: nextSettings.email,
-          alerts_enabled: nextSettings.alerts,
-          legislation_enabled: nextSettings.legislation,
-          language: nextSettings.language,
-          appearance: nextSettings.appearance,
-          high_contrast: nextSettings.highContrast,
-        };
-
-        const responses = await Promise.all([
-          fetch(`${supabaseUrl}/rest/v1/profiles`, {
-            method: "POST",
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-              "Content-Type": "application/json",
-              Prefer: "return=representation",
-            },
-            body: JSON.stringify([profilePayload]),
-          }),
-          fetch(`${supabaseUrl}/rest/v1/notifications`, {
-            method: "POST",
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-              "Content-Type": "application/json",
-              Prefer: "return=representation",
-            },
-            body: JSON.stringify([notificationPayload]),
-          }),
-        ]);
-
-        const synced = responses.every((response) => response.ok);
-        setSyncMode(synced ? "supabase" : "local");
-        return synced ? "supabase" as const : "local" as const;
-      } catch {
-        setSyncMode("local");
-        return "local" as const;
+      if (response.ok) {
+        setSyncMode("server");
+        return "server" as const;
       }
+    } catch {
+      // Fallback local quando o servidor não estiver disponível.
     }
 
     setSyncMode("local");
@@ -181,8 +188,8 @@ export default function Settings() {
       const nextMode = await persistSettings(settings);
       toast({
         title: "Configurações salvas",
-        description: nextMode === "supabase"
-          ? "Seu perfil foi salvo no CERES AI e sincronizado com a infraestrutura disponível."
+        description: nextMode === "server"
+          ? "Seu perfil foi salvo no CERES AI e sincronizado com o backend disponível."
           : "Seu perfil foi salvo localmente e ficará disponível ao entrar novamente.",
       });
     } catch {
@@ -216,7 +223,7 @@ export default function Settings() {
               </p>
             </div>
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-              {syncMode === "supabase"
+              {syncMode === "server"
                 ? "Sincronização disponível"
                 : "Modo local ativo"}
             </div>
