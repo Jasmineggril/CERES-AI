@@ -46,7 +46,7 @@ if (!databaseUrl) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
 
-const poolConfig: pg.PoolConfig = {
+const poolConfig: pg.PoolConfig & { family?: number } = {
   connectionString: databaseUrl,
 };
 

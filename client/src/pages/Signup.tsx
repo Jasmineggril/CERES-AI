@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, Leaf } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
+import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
   const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setStatusMessage("");
+
     if (formData.password !== formData.confirmPassword) {
       setError("As senhas não coincidem");
       return;
@@ -19,6 +23,7 @@ export default function Signup() {
       setError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
+
     setLoading(true);
     try {
       const res = await fetch("/api/auth/signup", {
@@ -26,25 +31,61 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password }),
       });
+
       if (!res.ok) {
-        const data = await res.json();
+        const fallbackUser = authenticateLocally({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          createIfMissing: true,
+        });
+
+        if (fallbackUser) {
+          writeStoredAuthSession(fallbackUser);
+          setStatusMessage("Banco indisponível. Sua conta foi criada localmente e já pode entrar no sistema.");
+          setLocation("/dashboard");
+          return;
+        }
+
+        const data = await res.json().catch(() => ({ message: "Erro ao criar conta" }));
         setError(data.message || "Erro ao criar conta");
         return;
       }
+
+      const payload = await res.json();
+      writeStoredAuthSession({
+        userId: payload.id ?? Date.now(),
+        email: payload.email ?? formData.email,
+        name: payload.name || formData.name,
+        source: "server",
+      });
       setLocation("/dashboard");
     } catch {
-      setError("Erro de conexão. Tente novamente.");
+      const fallbackUser = authenticateLocally({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        createIfMissing: true,
+      });
+
+      if (fallbackUser) {
+        writeStoredAuthSession(fallbackUser);
+        setStatusMessage("Banco indisponível. Seu cadastro foi salvo localmente para continuar.");
+        setLocation("/dashboard");
+        return;
+      }
+
+      setError("Banco indisponível. Tente novamente quando a conexão voltar.");
     } finally {
       setLoading(false);
     }
   };
 
   const set = (k: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFormData(f => ({ ...f, [k]: e.target.value }));
+    setFormData((f) => ({ ...f, [k]: e.target.value }));
 
   return (
     <div className="min-h-screen flex" style={{ background: "#F5F7F8" }}>
-      {/* Left panel — brand */}
       <div className="hidden lg:flex flex-col justify-between w-[420px] flex-shrink-0 p-10 text-white" style={{ background: "#0F5132" }}>
         <button
           onClick={() => setLocation("/")}
@@ -72,7 +113,6 @@ export default function Signup() {
         <p className="text-green-400 text-xs">haCARthon 2026 · ENAP · MGI</p>
       </div>
 
-      {/* Right panel — form */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <button
           onClick={() => setLocation("/")}
@@ -99,13 +139,20 @@ export default function Signup() {
             </div>
           )}
 
+          {statusMessage && (
+            <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-sm mb-5 flex items-start gap-2">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{statusMessage}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {[
               { label: "Nome completo", key: "name" as const, type: "text", placeholder: "Seu nome" },
               { label: "Email", key: "email" as const, type: "email", placeholder: "seu@email.com" },
               { label: "Senha", key: "password" as const, type: "password", placeholder: "••••••••" },
               { label: "Confirmar Senha", key: "confirmPassword" as const, type: "password", placeholder: "••••••••" },
-            ].map(f => (
+            ].map((f) => (
               <div key={f.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{f.label}</label>
                 <input

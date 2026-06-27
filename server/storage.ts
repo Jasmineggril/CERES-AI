@@ -35,27 +35,56 @@ export interface IStorage {
   createAchievement(data: InsertAchievement): Promise<Achievement>;
 }
 
+interface FallbackState {
+  users: User[];
+  sensors: Sensor[];
+  readings: Reading[];
+  alerts: Alert[];
+  weatherData: WeatherData[];
+  userStats: UserStats[];
+  denuncias: Denuncia[];
+  achievements: Achievement[];
+}
+
+const fallbackState: FallbackState = {
+  users: [],
+  sensors: [],
+  readings: [],
+  alerts: [],
+  weatherData: [],
+  userStats: [],
+  denuncias: [],
+  achievements: [],
+};
+
+function isDatabaseError(error: unknown) {
+  return error instanceof Error && /ECONNREFUSED|timeout|database|relation|does not exist|connect/i.test(error.message);
+}
+
+function createUserRecord(input: InsertUser): User {
+  return {
+    id: fallbackState.users.length + 1,
+    email: input.email,
+    password: input.password,
+    name: input.name,
+    firstName: input.firstName ?? "",
+    lastName: input.lastName ?? "",
+    role: "user",
+    bio: input.bio ?? "",
+    avatar: input.avatar ?? "",
+    createdAt: new Date(),
+  };
+}
+
 export class DatabaseStorage implements IStorage {
   private useFallback = false;
-  private fallbackUsers: User[] = [];
-  private fallbackSensors: Sensor[] = [];
-  private fallbackReadings: Reading[] = [];
-  private fallbackAlerts: Alert[] = [];
-  private fallbackWeather: WeatherData[] = [];
-  private fallbackUserStats: UserStats[] = [];
-  private fallbackDenuncias: Denuncia[] = [];
-  private fallbackAchievements: Achievement[] = [];
 
   private logFallback(reason: unknown) {
     this.useFallback = true;
     console.warn("Falling back to in-memory storage:", reason instanceof Error ? reason.message : String(reason));
   }
 
-  private nextId<T extends { id: number }>(items: T[]) {
-    return items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
-  }
-
-  private async withFallback<T>(operation: () => Promise<T>, fallback: () => T): Promise<T> {
+  private async runWithFallback<T>(operation: () => Promise<T>, fallback: () => T): Promise<T> {
     if (this.useFallback) {
       return fallback();
     }
@@ -63,58 +92,50 @@ export class DatabaseStorage implements IStorage {
     try {
       return await operation();
     } catch (error) {
-      this.logFallback(error);
-      return fallback();
+      if (isDatabaseError(error)) {
+        this.logFallback(error);
+        return fallback();
+      }
+      throw error;
     }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [user] = await db.select().from(users).where(eq(users.email, email));
         return user;
       },
-      () => this.fallbackUsers.find((user) => user.email === email),
+      () => fallbackState.users.find((user) => user.email === email)
     );
   }
 
   async createUser(user: InsertUser): Promise<User> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newUser] = await db.insert(users).values(user).returning();
         return newUser;
       },
       () => {
-        const created: User = {
-          id: this.nextId(this.fallbackUsers),
-          email: user.email,
-          password: user.password,
-          name: user.name,
-          firstName: user.firstName ?? "",
-          lastName: user.lastName ?? "",
-          role: user.role ?? "user",
-          bio: user.bio ?? "",
-          avatar: user.avatar ?? "",
-          createdAt: new Date(),
-        };
-        this.fallbackUsers.push(created);
-        return created;
-      },
+        const newUser = createUserRecord(user);
+        fallbackState.users.push(newUser);
+        return newUser;
+      }
     );
   }
 
   async getUserById(userId: number): Promise<User | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [user] = await db.select().from(users).where(eq(users.id, userId));
         return user;
       },
-      () => this.fallbackUsers.find((user) => user.id === userId),
+      () => fallbackState.users.find((user) => user.id === userId)
     );
   }
 
   async updateUser(userId: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const updateObject = Object.fromEntries(
           Object.entries(updates).filter(([, value]) => value !== undefined),
@@ -129,183 +150,192 @@ export class DatabaseStorage implements IStorage {
         return updated;
       },
       () => {
-        const index = this.fallbackUsers.findIndex((user) => user.id === userId);
+        const index = fallbackState.users.findIndex((user) => user.id === userId);
         if (index === -1) return undefined;
 
         const updated = {
-          ...this.fallbackUsers[index],
+          ...fallbackState.users[index],
           ...updates,
         } as User;
-        this.fallbackUsers[index] = updated;
+        fallbackState.users[index] = updated;
         return updated;
-      },
+      }
     );
   }
 
-  get isFallbackActive() {
+  isFallbackActive(): boolean {
     return this.useFallback;
   }
 
   async getSensors(): Promise<Sensor[]> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => await db.select().from(sensors).orderBy(sensors.id),
-      () => [...this.fallbackSensors].sort((a, b) => a.id - b.id),
+      () => [...fallbackState.sensors].sort((a, b) => a.id - b.id)
     );
   }
 
   async getSensor(id: number): Promise<Sensor | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [sensor] = await db.select().from(sensors).where(eq(sensors.id, id));
         return sensor;
       },
-      () => this.fallbackSensors.find((sensor) => sensor.id === id),
+      () => fallbackState.sensors.find((sensor) => sensor.id === id)
     );
   }
 
   async createSensor(sensor: InsertSensor): Promise<Sensor> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newSensor] = await db.insert(sensors).values(sensor).returning();
         return newSensor;
       },
       () => {
-        const created: Sensor = {
-          id: this.nextId(this.fallbackSensors),
+        const newSensor: Sensor = {
+          id: fallbackState.sensors.length + 1,
           name: sensor.name,
           type: sensor.type,
           location: sensor.location,
-          status: sensor.status,
+          status: sensor.status ?? "active",
           latitude: sensor.latitude ?? null,
           longitude: sensor.longitude ?? null,
           lastPing: new Date(),
         };
-        this.fallbackSensors.push(created);
-        return created;
-      },
+        fallbackState.sensors.push(newSensor);
+        return newSensor;
+      }
     );
   }
 
   async updateSensor(id: number, updates: Partial<InsertSensor>): Promise<Sensor | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
-        const [updated] = await db.update(sensors).set(updates).where(eq(sensors.id, id)).returning();
+        const [updated] = await db.update(sensors)
+          .set(updates)
+          .where(eq(sensors.id, id))
+          .returning();
         return updated;
       },
       () => {
-        const index = this.fallbackSensors.findIndex((sensor) => sensor.id === id);
-        if (index === -1) return undefined;
-        const updated = { ...this.fallbackSensors[index], ...updates } as Sensor;
-        this.fallbackSensors[index] = updated;
-        return updated;
-      },
+        const sensor = fallbackState.sensors.find((item) => item.id === id);
+        if (!sensor) return undefined;
+        Object.assign(sensor, updates);
+        return sensor;
+      }
     );
   }
 
   async deleteSensor(id: number): Promise<void> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         await db.delete(sensors).where(eq(sensors.id, id));
       },
       () => {
-        this.fallbackSensors = this.fallbackSensors.filter((sensor) => sensor.id !== id);
-      },
+        fallbackState.sensors = fallbackState.sensors.filter((sensor) => sensor.id !== id);
+      }
     );
   }
 
   async getReadings(sensorId?: number): Promise<Reading[]> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         if (sensorId) {
-          return await db.select().from(readings).where(eq(readings.sensorId, sensorId)).orderBy(desc(readings.timestamp));
+          return await db.select().from(readings)
+            .where(eq(readings.sensorId, sensorId))
+            .orderBy(desc(readings.timestamp));
         }
         return await db.select().from(readings).orderBy(desc(readings.timestamp));
       },
-      () => this.fallbackReadings.filter((reading) => !sensorId || reading.sensorId === sensorId).sort((a, b) => (b.timestamp?.getTime() ?? 0) - (a.timestamp?.getTime() ?? 0)),
+      () => fallbackState.readings.filter((reading) => !sensorId || reading.sensorId === sensorId)
     );
   }
 
   async createReading(reading: InsertReading): Promise<Reading> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newReading] = await db.insert(readings).values(reading).returning();
         return newReading;
       },
       () => {
-        const created: Reading = {
-          id: this.nextId(this.fallbackReadings),
+        const newReading: Reading = {
+          id: fallbackState.readings.length + 1,
           sensorId: reading.sensorId,
           value: reading.value,
           unit: reading.unit,
           timestamp: new Date(),
         };
-        this.fallbackReadings.push(created);
-        return created;
-      },
+        fallbackState.readings.push(newReading);
+        return newReading;
+      }
     );
   }
 
   async getAlerts(): Promise<Alert[]> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => await db.select().from(alerts).orderBy(desc(alerts.createdAt)),
-      () => [...this.fallbackAlerts].sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)),
+      () => [...fallbackState.alerts].sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0))
     );
   }
 
   async createAlert(alert: InsertAlert): Promise<Alert> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newAlert] = await db.insert(alerts).values(alert).returning();
         return newAlert;
       },
       () => {
-        const created: Alert = {
-          id: this.nextId(this.fallbackAlerts),
+        const newAlert: Alert = {
+          id: fallbackState.alerts.length + 1,
           sensorId: alert.sensorId ?? null,
           title: alert.title,
           message: alert.message,
           severity: alert.severity,
-          isResolved: alert.isResolved ?? false,
+          isResolved: false,
           createdAt: new Date(),
         };
-        this.fallbackAlerts.push(created);
-        return created;
-      },
+        fallbackState.alerts.push(newAlert);
+        return newAlert;
+      }
     );
   }
 
   async resolveAlert(id: number): Promise<Alert | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
-        const [updated] = await db.update(alerts).set({ isResolved: true }).where(eq(alerts.id, id)).returning();
+        const [updated] = await db.update(alerts)
+          .set({ isResolved: true })
+          .where(eq(alerts.id, id))
+          .returning();
         return updated;
       },
       () => {
-        const index = this.fallbackAlerts.findIndex((alert) => alert.id === id);
-        if (index === -1) return undefined;
-        const updated = { ...this.fallbackAlerts[index], isResolved: true } as Alert;
-        this.fallbackAlerts[index] = updated;
-        return updated;
-      },
+        const alert = fallbackState.alerts.find((item) => item.id === id);
+        if (!alert) return undefined;
+        alert.isResolved = true;
+        return alert;
+      }
     );
   }
 
   async getWeatherData(latitude?: number, longitude?: number): Promise<WeatherData[]> {
-    return this.withFallback(
-      async () => await db.select().from(weatherData).orderBy(desc(weatherData.timestamp)),
-      () => [...this.fallbackWeather].sort((a, b) => (b.timestamp?.getTime() ?? 0) - (a.timestamp?.getTime() ?? 0)),
+    return this.runWithFallback(
+      async () => {
+        const query = db.select().from(weatherData);
+        return await query.orderBy(desc(weatherData.timestamp));
+      },
+      () => fallbackState.weatherData.filter((item) => (latitude == null || item.latitude === latitude) && (longitude == null || item.longitude === longitude))
     );
   }
 
   async createWeatherData(data: InsertWeatherData): Promise<WeatherData> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newWeather] = await db.insert(weatherData).values(data).returning();
         return newWeather;
       },
       () => {
-        const created: WeatherData = {
-          id: this.nextId(this.fallbackWeather),
+        const newWeather: WeatherData = {
+          id: fallbackState.weatherData.length + 1,
           latitude: data.latitude,
           longitude: data.longitude,
           temperature: data.temperature ?? null,
@@ -318,41 +348,43 @@ export class DatabaseStorage implements IStorage {
           condition: data.condition ?? null,
           timestamp: new Date(),
         };
-        this.fallbackWeather.push(created);
-        return created;
-      },
+        fallbackState.weatherData.push(newWeather);
+        return newWeather;
+      }
     );
   }
 
   async getLatestWeather(): Promise<WeatherData | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
-        const [latest] = await db.select().from(weatherData).orderBy(desc(weatherData.timestamp)).limit(1);
+        const [latest] = await db.select().from(weatherData)
+          .orderBy(desc(weatherData.timestamp))
+          .limit(1);
         return latest;
       },
-      () => this.fallbackWeather.slice().sort((a, b) => (b.timestamp?.getTime() ?? 0) - (a.timestamp?.getTime() ?? 0))[0],
+      () => fallbackState.weatherData[0]
     );
   }
 
   async getUserStats(userId: number): Promise<UserStats | undefined> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
         return stats;
       },
-      () => this.fallbackUserStats.find((stats) => stats.userId === userId),
+      () => fallbackState.userStats.find((stats) => stats.userId === userId)
     );
   }
 
   async createUserStats(stats: InsertUserStats): Promise<UserStats> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [newStats] = await db.insert(userStats).values(stats).returning();
         return newStats;
       },
       () => {
-        const created: UserStats = {
-          id: this.nextId(this.fallbackUserStats),
+        const newStats: UserStats = {
+          id: fallbackState.userStats.length + 1,
           userId: stats.userId,
           points: stats.points ?? 0,
           level: stats.level ?? 1,
@@ -360,85 +392,88 @@ export class DatabaseStorage implements IStorage {
           achievement: stats.achievement ?? "iniciante",
           lastActivity: new Date(),
         };
-        this.fallbackUserStats.push(created);
-        return created;
-      },
+        fallbackState.userStats.push(newStats);
+        return newStats;
+      }
     );
   }
 
   async addPoints(userId: number, points: number): Promise<UserStats | undefined> {
-    return this.withFallback(
+    const current = await this.getUserStats(userId);
+    if (!current) return undefined;
+    const currentPoints = current.points ?? 0;
+    const newPoints = currentPoints + points;
+    const newLevel = newPoints >= 1000 ? 5 : newPoints >= 500 ? 4 : newPoints >= 300 ? 3 : newPoints >= 100 ? 2 : 1;
+    let achievement = "iniciante";
+    if (newPoints >= 1000) achievement = "mestre";
+    else if (newPoints >= 500) achievement = "herói";
+    else if (newPoints >= 300) achievement = "guardião";
+    else if (newPoints >= 100) achievement = "protetor";
+
+    return this.runWithFallback(
       async () => {
-        const current = await this.getUserStats(userId);
-        if (!current) return undefined;
-        const currentPoints = current.points ?? 0;
-        const newPoints = currentPoints + points;
-        const newLevel = newPoints >= 1000 ? 5 : newPoints >= 500 ? 4 : newPoints >= 300 ? 3 : newPoints >= 100 ? 2 : 1;
-        let achievement = "iniciante";
-        if (newPoints >= 1000) achievement = "mestre";
-        else if (newPoints >= 500) achievement = "herói";
-        else if (newPoints >= 300) achievement = "guardião";
-        else if (newPoints >= 100) achievement = "protetor";
-        const [updated] = await db.update(userStats).set({ points: newPoints, level: newLevel, achievement, lastActivity: new Date() }).where(eq(userStats.userId, userId)).returning();
+        const [updated] = await db.update(userStats)
+          .set({ points: newPoints, level: newLevel, achievement, lastActivity: new Date() })
+          .where(eq(userStats.userId, userId))
+          .returning();
         return updated;
       },
       () => {
-        const index = this.fallbackUserStats.findIndex((stats) => stats.userId === userId);
-        if (index === -1) return undefined;
-        const current = this.fallbackUserStats[index];
-        const newPoints = (current.points ?? 0) + points;
-        const newLevel = newPoints >= 1000 ? 5 : newPoints >= 500 ? 4 : newPoints >= 300 ? 3 : newPoints >= 100 ? 2 : 1;
-        let achievement = "iniciante";
-        if (newPoints >= 1000) achievement = "mestre";
-        else if (newPoints >= 500) achievement = "herói";
-        else if (newPoints >= 300) achievement = "guardião";
-        else if (newPoints >= 100) achievement = "protetor";
-        const updated = { ...current, points: newPoints, level: newLevel, achievement, lastActivity: new Date() } as UserStats;
-        this.fallbackUserStats[index] = updated;
-        return updated;
-      },
+        const update = fallbackState.userStats.find((item) => item.userId === userId);
+        if (!update) return undefined;
+        update.points = newPoints;
+        update.level = newLevel;
+        update.achievement = achievement;
+        update.lastActivity = new Date();
+        return update;
+      }
     );
   }
 
   async incrementDenuncias(userId: number): Promise<UserStats | undefined> {
-    return this.withFallback(
+    const current = await this.getUserStats(userId);
+    if (!current) return undefined;
+    return this.runWithFallback(
       async () => {
-        const current = await this.getUserStats(userId);
-        if (!current) return undefined;
-        const [updated] = await db.update(userStats).set({ denunciasCount: (current.denunciasCount ?? 0) + 1, lastActivity: new Date() }).where(eq(userStats.userId, userId)).returning();
+        const [updated] = await db.update(userStats)
+          .set({ denunciasCount: (current.denunciasCount ?? 0) + 1, lastActivity: new Date() })
+          .where(eq(userStats.userId, userId))
+          .returning();
         return updated;
       },
       () => {
-        const index = this.fallbackUserStats.findIndex((stats) => stats.userId === userId);
-        if (index === -1) return undefined;
-        const updated = { ...this.fallbackUserStats[index], denunciasCount: (this.fallbackUserStats[index].denunciasCount ?? 0) + 1, lastActivity: new Date() } as UserStats;
-        this.fallbackUserStats[index] = updated;
-        return updated;
-      },
+        const update = fallbackState.userStats.find((item) => item.userId === userId);
+        if (!update) return undefined;
+        update.denunciasCount = (update.denunciasCount ?? 0) + 1;
+        update.lastActivity = new Date();
+        return update;
+      }
     );
   }
 
   async getDenuncias(userId?: number): Promise<Denuncia[]> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         if (userId) {
-          return await db.select().from(denuncias).where(eq(denuncias.userId, userId)).orderBy(desc(denuncias.createdAt));
+          return await db.select().from(denuncias)
+            .where(eq(denuncias.userId, userId))
+            .orderBy(desc(denuncias.createdAt));
         }
         return await db.select().from(denuncias).orderBy(desc(denuncias.createdAt));
       },
-      () => this.fallbackDenuncias.filter((denuncia) => !userId || denuncia.userId === userId).sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)),
+      () => fallbackState.denuncias.filter((item) => !userId || item.userId === userId)
     );
   }
 
   async createDenuncia(data: InsertDenuncia): Promise<Denuncia> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [d] = await db.insert(denuncias).values(data).returning();
         return d;
       },
       () => {
-        const created: Denuncia = {
-          id: this.nextId(this.fallbackDenuncias),
+        const newDenuncia: Denuncia = {
+          id: fallbackState.denuncias.length + 1,
           userId: data.userId ?? null,
           titulo: data.titulo,
           descricao: data.descricao,
@@ -450,37 +485,39 @@ export class DatabaseStorage implements IStorage {
           pontosAtribuidos: 50,
           createdAt: new Date(),
         };
-        this.fallbackDenuncias.push(created);
-        return created;
-      },
+        fallbackState.denuncias.push(newDenuncia);
+        return newDenuncia;
+      }
     );
   }
 
   async getAchievements(userId: number): Promise<Achievement[]> {
-    return this.withFallback(
-      async () => await db.select().from(achievements).where(eq(achievements.userId, userId)).orderBy(desc(achievements.earnedAt)),
-      () => this.fallbackAchievements.filter((achievement) => achievement.userId === userId).sort((a, b) => (b.earnedAt?.getTime() ?? 0) - (a.earnedAt?.getTime() ?? 0)),
+    return this.runWithFallback(
+      async () => await db.select().from(achievements)
+        .where(eq(achievements.userId, userId))
+        .orderBy(desc(achievements.earnedAt)),
+      () => fallbackState.achievements.filter((item) => item.userId === userId)
     );
   }
 
   async createAchievement(data: InsertAchievement): Promise<Achievement> {
-    return this.withFallback(
+    return this.runWithFallback(
       async () => {
         const [a] = await db.insert(achievements).values(data).returning();
         return a;
       },
       () => {
-        const created: Achievement = {
-          id: this.nextId(this.fallbackAchievements),
+        const newAchievement: Achievement = {
+          id: fallbackState.achievements.length + 1,
           userId: data.userId,
           badgeId: data.badgeId,
           badgeName: data.badgeName,
           badgeDesc: data.badgeDesc,
           earnedAt: new Date(),
         };
-        this.fallbackAchievements.push(created);
-        return created;
-      },
+        fallbackState.achievements.push(newAchievement);
+        return newAchievement;
+      }
     );
   }
 }

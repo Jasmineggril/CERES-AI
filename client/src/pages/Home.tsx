@@ -917,7 +917,7 @@ export default function Home() {
             Seu CAR mais simples, inteligente e acessível.
           </p>
           <p className="text-gray-400 text-base mb-10 leading-relaxed">
-            Tecnologia para proteger o território.<br />Inteligência para preservar o futuro.
+            Plataforma CERES AI oficial em <span className="font-semibold text-gray-600">ceres-ai-oficial.vercel.app</span>.<br />Tecnologia para proteger o território e inteligência para preservar o futuro.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button onClick={() => setLocation("/signup")}

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type InsertSensor } from "@shared/routes";
+import { api, buildUrl } from "@shared/routes";
+import type { InsertSensor } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useSensors() {

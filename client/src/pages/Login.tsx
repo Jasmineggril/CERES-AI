@@ -1,32 +1,61 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, Leaf } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
+import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
   const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setStatusMessage("");
+
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
       if (!res.ok) {
-        const data = await res.json();
+        const fallbackUser = authenticateLocally({ email, password });
+        if (fallbackUser) {
+          writeStoredAuthSession(fallbackUser);
+          setStatusMessage("Banco indisponível. Seu acesso foi mantido em modo local.");
+          setLocation("/dashboard");
+          return;
+        }
+
+        const data = await res.json().catch(() => ({ message: "Email ou senha inválidos" }));
         setError(data.message || "Email ou senha inválidos");
         return;
       }
+
+      const payload = await res.json();
+      writeStoredAuthSession({
+        userId: payload.id ?? Date.now(),
+        email: payload.email ?? email,
+        name: payload.name || email.split("@")[0],
+        source: "server",
+      });
       setLocation("/dashboard");
     } catch {
-      setError("Erro de conexão. Tente novamente.");
+      const fallbackUser = authenticateLocally({ email, password });
+      if (fallbackUser) {
+        writeStoredAuthSession(fallbackUser);
+        setStatusMessage("Banco indisponível. Continuando em modo local com acesso imediato.");
+        setLocation("/dashboard");
+        return;
+      }
+
+      setError("Banco indisponível. Cadastre-se ou tente novamente quando a conexão voltar.");
     } finally {
       setLoading(false);
     }
@@ -34,7 +63,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex" style={{ background: "#F5F7F8" }}>
-      {/* Left panel — brand */}
       <div className="hidden lg:flex flex-col justify-between w-[420px] flex-shrink-0 p-10 text-white" style={{ background: "#0F5132" }}>
         <button
           onClick={() => setLocation("/")}
@@ -70,9 +98,7 @@ export default function Login() {
         <p className="text-green-400 text-xs">haCARthon 2026 · ENAP · MGI</p>
       </div>
 
-      {/* Right panel — form */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
-        {/* Mobile back button */}
         <button
           onClick={() => setLocation("/")}
           className="lg:hidden absolute top-6 left-6 flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
@@ -98,6 +124,13 @@ export default function Login() {
             </div>
           )}
 
+          {statusMessage && (
+            <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-sm mb-5 flex items-start gap-2">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{statusMessage}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
@@ -106,7 +139,6 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm"
-                style={{ focusRingColor: "#0F5132" }}
                 placeholder="seu@email.com"
                 required
                 data-testid="input-email"

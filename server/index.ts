@@ -1,9 +1,10 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import createMemoryStore from "memorystore";
+import connectPgSimple from "connect-pg-simple";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { pool } from "./db";
 
 const app = express();
 const httpServer = createServer(app);
@@ -22,11 +23,20 @@ declare module "express-session" {
   }
 }
 
-const MemoryStore = createMemoryStore(session);
+const PgSession = connectPgSimple(session);
+
+const sessionStore = (() => {
+  try {
+    return new PgSession({ pool, createTableIfMissing: true });
+  } catch (error) {
+    console.warn("Fallback para armazenamento de sessão em memória:", error instanceof Error ? error.message : error);
+    return new session.MemoryStore();
+  }
+})();
 
 app.use(
   session({
-    store: new MemoryStore({ checkPeriod: 24 * 60 * 60 * 1000 }),
+    store: sessionStore,
     secret: process.env.SESSION_SECRET || "ceres-ai-dev-secret",
     resave: false,
     saveUninitialized: false,
@@ -88,10 +98,8 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    console.error("Unhandled error:", message);
-    if (!res.headersSent) {
-      res.status(status).json({ message });
-    }
+    res.status(status).json({ message });
+    throw err;
   });
 
   // importantly only setup vite in development and after

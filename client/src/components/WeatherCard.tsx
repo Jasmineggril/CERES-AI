@@ -47,7 +47,8 @@ export function WeatherCard({ data, isLoading }: WeatherCardProps) {
       storm: "Tempestade",
       foggy: "Nevoeiro"
     };
-    return conditions[data.condition] || data.condition;
+    const condition = data.condition ?? "";
+    return conditions[condition] || condition || "Indefinido";
   };
 
   return (
