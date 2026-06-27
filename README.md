@@ -2,6 +2,8 @@
 
 **Seu CAR mais simples, inteligente e acessível.**
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/f5b88641-e0d6-4597-8b7e-9f4ca78b18cd" />
+
 > Transformando dados ambientais em decisões inteligentes.
 
 Desenvolvido para o **haCARthon 2026** — Maratona Nacional de Soluções para o Cadastro Ambiental Rural (CAR), promovida pela ENAP, MGI, FBDS e Governo da Noruega.
