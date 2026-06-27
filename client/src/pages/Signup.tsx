@@ -1,7 +1,30 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
-import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
+import { supabase } from "@/lib/supabase";
+
+function getSignupErrorMessage(error: unknown): string {
+  if (error && typeof error === "object" && "message" in error) {
+    const message = String((error as { message?: string }).message ?? "");
+    if (message.toLowerCase().includes("user already registered") || message.toLowerCase().includes("already registered")) {
+      return "Este e-mail já está cadastrado.";
+    }
+    if (message.toLowerCase().includes("password") && message.toLowerCase().includes("least")) {
+      return "A senha deve ter pelo menos 6 caracteres.";
+    }
+    if (message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url") || message.toLowerCase().includes("missing environment variable")) {
+      return "A configuração do Supabase está incorreta. Verifique VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.";
+    }
+    if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("rls")) {
+      return "Não foi possível criar o perfil por causa de uma política de segurança do Supabase.";
+    }
+    if (message.toLowerCase().includes("profiles") && message.toLowerCase().includes("does not exist")) {
+      return "A tabela profiles ainda não existe no projeto Supabase.";
+    }
+  }
+
+  return "Não foi possível criar a conta no momento.";
+}
 
 export default function Signup() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
@@ -26,56 +49,44 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password }),
-      });
-
-      if (!res.ok) {
-        const fallbackUser = authenticateLocally({
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-          createIfMissing: true,
-        });
-
-        if (fallbackUser) {
-          writeStoredAuthSession(fallbackUser);
-          setStatusMessage("Banco indisponível. Sua conta foi criada localmente e já pode entrar no sistema.");
-          setLocation("/dashboard");
-          return;
-        }
-
-        const data = await res.json().catch(() => ({ message: "Erro ao criar conta" }));
-        setError(data.message || "Erro ao criar conta");
-        return;
-      }
-
-      const payload = await res.json();
-      writeStoredAuthSession({
-        userId: payload.id ?? Date.now(),
-        email: payload.email ?? formData.email,
-        name: payload.name || formData.name,
-        source: "server",
-      });
-      setLocation("/dashboard");
-    } catch {
-      const fallbackUser = authenticateLocally({
+      console.log("Etapa 1: criando usuário no Auth");
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        name: formData.name,
-        createIfMissing: true,
+        options: {
+          data: { full_name: formData.name },
+        },
       });
+      console.error("Erro no cadastro:", authError);
 
-      if (fallbackUser) {
-        writeStoredAuthSession(fallbackUser);
-        setStatusMessage("Banco indisponível. Seu cadastro foi salvo localmente para continuar.");
-        setLocation("/dashboard");
+      if (authError) {
+        setError(getSignupErrorMessage(authError));
         return;
       }
 
-      setError("Banco indisponível. Tente novamente quando a conexão voltar.");
+      if (!authData.user) {
+        setError("O cadastro não retornou um usuário válido.");
+        return;
+      }
+
+      console.log("Etapa 2: criando registro em profiles");
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: authData.user.id,
+        email: formData.email,
+        full_name: formData.name,
+      });
+
+      if (profileError) {
+        console.error("Erro ao criar profile:", profileError);
+        setError(getSignupErrorMessage(profileError));
+        return;
+      }
+
+      setStatusMessage("Conta criada com sucesso. Redirecionando...");
+      setLocation("/dashboard");
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      setError(getSignupErrorMessage(error));
     } finally {
       setLoading(false);
     }

@@ -92,11 +92,8 @@ export class DatabaseStorage implements IStorage {
     try {
       return await operation();
     } catch (error) {
-      if (isDatabaseError(error)) {
-        this.logFallback(error);
-        return fallback();
-      }
-      throw error;
+      this.logFallback(error);
+      return fallback();
     }
   }
 

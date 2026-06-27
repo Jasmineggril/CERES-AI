@@ -1,7 +1,33 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
-import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
+import { supabase } from "@/lib/supabase";
+
+function getLoginErrorMessage(error: unknown): string {
+  if (error && typeof error === "object" && "message" in error) {
+    const message = String((error as { message?: string }).message ?? "");
+    if (message.toLowerCase().includes("email not confirmed") || message.toLowerCase().includes("email_not_confirmed")) {
+      return "Confirme seu e-mail antes de entrar.";
+    }
+    if (message.toLowerCase().includes("invalid login credentials") || message.toLowerCase().includes("invalid credentials")) {
+      return "E-mail ou senha incorretos.";
+    }
+    if (message.toLowerCase().includes("user not found")) {
+      return "Usuário não encontrado. Crie uma conta para continuar.";
+    }
+    if (message.toLowerCase().includes("missing environment variable") || message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url")) {
+      return "A configuração do Supabase está incompleta. Verifique as variáveis VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.";
+    }
+    if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("rls")) {
+      return "O acesso ao perfil foi bloqueado por uma política de segurança. Verifique as políticas do Supabase.";
+    }
+    if (message.toLowerCase().includes("profile") && message.toLowerCase().includes("not found")) {
+      return "Não foi possível localizar o perfil do usuário.";
+    }
+  }
+
+  return "Não foi possível entrar no momento.";
+}
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,44 +44,42 @@ export default function Login() {
     setStatusMessage("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      console.log("Iniciando login para", email);
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
+      console.error("Erro no login:", error);
 
-      if (!res.ok) {
-        const fallbackUser = authenticateLocally({ email, password });
-        if (fallbackUser) {
-          writeStoredAuthSession(fallbackUser);
-          setStatusMessage("Banco indisponível. Seu acesso foi mantido em modo local.");
-          setLocation("/dashboard");
-          return;
-        }
-
-        const data = await res.json().catch(() => ({ message: "Email ou senha inválidos" }));
-        setError(data.message || "Email ou senha inválidos");
+      if (error) {
+        setError(getLoginErrorMessage(error));
         return;
       }
 
-      const payload = await res.json();
-      writeStoredAuthSession({
-        userId: payload.id ?? Date.now(),
-        email: payload.email ?? email,
-        name: payload.name || email.split("@")[0],
-        source: "server",
-      });
+      if (!authData.session) {
+        setError("Não foi possível abrir uma sessão válida para este usuário.");
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .eq("id", authData.user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error("Erro ao buscar perfil no login:", profileError);
+        setError(getLoginErrorMessage(profileError));
+        return;
+      }
+
+      if (!profileData) {
+        setError("Perfil não encontrado. Complete o cadastro do usuário na tabela profiles.");
+        return;
+      }
+
+      setStatusMessage("Login realizado com sucesso.");
       setLocation("/dashboard");
-    } catch {
-      const fallbackUser = authenticateLocally({ email, password });
-      if (fallbackUser) {
-        writeStoredAuthSession(fallbackUser);
-        setStatusMessage("Banco indisponível. Continuando em modo local com acesso imediato.");
-        setLocation("/dashboard");
-        return;
-      }
-
-      setError("Banco indisponível. Cadastre-se ou tente novamente quando a conexão voltar.");
+    } catch (error) {
+      console.error("Erro no login:", error);
+      setError(getLoginErrorMessage(error));
     } finally {
       setLoading(false);
     }
