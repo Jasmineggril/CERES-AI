@@ -113,8 +113,10 @@ O CERES AI foi concebido seguindo princípios de:
 - **Reutilização** — Modular, adotável por qualquer ente público
 
 Nossa visão é contribuir para a evolução do CAR como um verdadeiro **Bem Público Digital**.
+-------
+<img width="2048" height="2048" alt="instruçoes" src="https://github.com/user-attachments/assets/f0defb79-4273-49e4-a667-84bcd2aa946d" />
 
----
+-------
 
 ## Missão
 
