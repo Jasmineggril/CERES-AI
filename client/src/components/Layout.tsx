@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard, Radio, Bell, Settings,
-  FileText, Map, BarChart3, Home, Trophy
+  FileText, Map, BarChart3, Home, Trophy, FileSearch
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/Header";
@@ -19,9 +19,10 @@ export function Layout({ children }: LayoutProps) {
   const navItems = [
     { icon: Home,            label: "Início",          href: "/" },
     { icon: LayoutDashboard, label: "Painel",           href: "/dashboard" },
+    { icon: FileSearch,      label: "Diagnóstico CAR",  href: "/simulacao" },
     { icon: Map,             label: "CERES Maps",       href: "/maps" },
     { icon: BarChart3,       label: "CERES Insights",   href: "/insights" },
-    { icon: Trophy,          label: "Comunidade",       href: "/comunidade" },
+    { icon: Trophy,          label: "CERES Aprende",    href: "/aprende" },
     { icon: Bell,            label: "Alertas",          href: "/alerts" },
     { icon: Radio,           label: "Sensores",         href: "/sensors" },
     { icon: FileText,        label: "Relatórios",       href: "/reports" },

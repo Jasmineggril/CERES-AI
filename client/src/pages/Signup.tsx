@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
 function getSignupErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
@@ -49,7 +50,30 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      console.log("Etapa 1: criando usuário no Auth");
+      if (!isSupabaseConfigured) {
+        const localSession = authenticateLocally({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          createIfMissing: true,
+        });
+
+        if (!localSession) {
+          setError("Não foi possível criar a conta local.");
+          return;
+        }
+
+        writeStoredAuthSession(localSession);
+        setStatusMessage("Conta criada com sucesso em modo local. Redirecionando...");
+        setLocation("/dashboard");
+        return;
+      }
+
+      if (!supabase) {
+        setError("A configuração do Supabase está incompleta.");
+        return;
+      }
+
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -57,7 +81,6 @@ export default function Signup() {
           data: { full_name: formData.name },
         },
       });
-      console.error("Erro no cadastro:", authError);
 
       if (authError) {
         setError(getSignupErrorMessage(authError));
@@ -69,7 +92,6 @@ export default function Signup() {
         return;
       }
 
-      console.log("Etapa 2: criando registro em profiles");
       const { error: profileError } = await supabase.from("profiles").insert({
         id: authData.user.id,
         email: formData.email,
@@ -77,9 +99,12 @@ export default function Signup() {
       });
 
       if (profileError) {
-        console.error("Erro ao criar profile:", profileError);
-        setError(getSignupErrorMessage(profileError));
-        return;
+        const message = String(profileError.message ?? "").toLowerCase();
+        if (!message.includes("does not exist") && !message.includes("relation")) {
+          console.error("Erro ao criar profile:", profileError);
+          setError(getSignupErrorMessage(profileError));
+          return;
+        }
       }
 
       setStatusMessage("Conta criada com sucesso. Redirecionando...");

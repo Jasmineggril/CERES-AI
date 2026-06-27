@@ -61,6 +61,7 @@ function Router() {
       <Route path="/admin" component={() => <ProtectedRoute component={Admin} />} />
       <Route path="/maps" component={() => <ProtectedRoute component={CeresMaps} />} />
       <Route path="/insights" component={() => <ProtectedRoute component={CeresInsights} />} />
+      <Route path="/aprende" component={() => <ProtectedRoute component={Gamificacao} />} />
       <Route path="/comunidade" component={() => <ProtectedRoute component={Gamificacao} />} />
       <Route path="/settings" component={() => <ProtectedRoute component={Settings} />} />
       <Route component={NotFound} />

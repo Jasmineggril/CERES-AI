@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
 function getLoginErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
@@ -44,9 +45,25 @@ export default function Login() {
     setStatusMessage("");
 
     try {
-      console.log("Iniciando login para", email);
+      if (!isSupabaseConfigured) {
+        const localSession = authenticateLocally({ email, password, createIfMissing: false });
+        if (!localSession) {
+          setError("E-mail ou senha incorretos.");
+          return;
+        }
+
+        writeStoredAuthSession(localSession);
+        setStatusMessage("Login realizado com sucesso em modo local.");
+        setLocation("/dashboard");
+        return;
+      }
+
+      if (!supabase) {
+        setError("A configuração do Supabase está incompleta.");
+        return;
+      }
+
       const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-      console.error("Erro no login:", error);
 
       if (error) {
         setError(getLoginErrorMessage(error));
@@ -65,17 +82,19 @@ export default function Login() {
         .maybeSingle();
 
       if (profileError) {
-        console.error("Erro ao buscar perfil no login:", profileError);
-        setError(getLoginErrorMessage(profileError));
-        return;
+        const message = String(profileError.message ?? "").toLowerCase();
+        if (!message.includes("does not exist") && !message.includes("relation")) {
+          console.error("Erro ao buscar perfil no login:", profileError);
+          setError(getLoginErrorMessage(profileError));
+          return;
+        }
       }
 
       if (!profileData) {
-        setError("Perfil não encontrado. Complete o cadastro do usuário na tabela profiles.");
-        return;
+        setStatusMessage("Login realizado com sucesso. O perfil pode ser criado posteriormente.");
+      } else {
+        setStatusMessage("Login realizado com sucesso.");
       }
-
-      setStatusMessage("Login realizado com sucesso.");
       setLocation("/dashboard");
     } catch (error) {
       console.error("Erro no login:", error);
