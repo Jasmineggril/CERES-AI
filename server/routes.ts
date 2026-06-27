@@ -75,6 +75,68 @@ export async function registerRoutes(
     }
   });
 
+  app.get(api.user.profile.get.path, async (req, res) => {
+    const session = (req as any).session;
+    if (!session?.userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await storage.getUserById(session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      bio: user.bio ?? "",
+      avatar: user.avatar ?? "",
+      usingFallback: storage.isFallbackActive(),
+    });
+  });
+
+  app.put(api.user.profile.update.path, async (req, res) => {
+    try {
+      const input = api.user.profile.update.input.parse(req.body);
+      const session = (req as any).session;
+      if (!session?.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      if (input.email) {
+        const existing = await storage.getUserByEmail(input.email);
+        if (existing && existing.id !== session.userId) {
+          return res.status(400).json({ message: "Email já está em uso" });
+        }
+      }
+
+      const updated = await storage.updateUser(session.userId, {
+        ...input,
+      });
+
+      if (!updated) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({
+        firstName: updated.firstName,
+        lastName: updated.lastName,
+        email: updated.email,
+        role: updated.role,
+        bio: updated.bio ?? "",
+        avatar: updated.avatar ?? "",
+        usingFallback: storage.isFallbackActive(),
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message });
+      }
+      throw err;
+    }
+  });
+
   // Sensors
   app.get(api.sensors.list.path, async (req, res) => {
     const sensors = await storage.getSensors();
@@ -272,7 +334,11 @@ export async function seedDatabase() {
 
   if (existingAlerts.length === 0 || hasEnglishAlerts) {
     // Clear old alerts and insert Portuguese ones
-    await db.delete(alerts);
+    try {
+      await db.delete(alerts);
+    } catch {
+      // Ignore cleanup failures when the database is unavailable.
+    }
 
     const allSensors = await storage.getSensors();
     const s1id = allSensors[0]?.id ?? 1;

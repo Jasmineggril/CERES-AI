@@ -32,6 +32,48 @@ export const api = {
       responses: { 200: z.object({ userId: z.number(), email: z.string(), name: z.string() }) },
     },
   },
+  user: {
+    profile: {
+      get: {
+        method: 'GET' as const,
+        path: '/api/user/profile',
+        responses: {
+          200: z.object({
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string(),
+            role: z.string(),
+            bio: z.string(),
+            avatar: z.string(),
+            usingFallback: z.boolean(),
+          }),
+        },
+      },
+      update: {
+        method: 'PUT' as const,
+        path: '/api/user/profile',
+        input: z.object({
+          firstName: z.string().optional(),
+          lastName: z.string().optional(),
+          email: z.string().email().optional(),
+          role: z.string().optional(),
+          bio: z.string().optional(),
+          avatar: z.string().optional(),
+        }),
+        responses: {
+          200: z.object({
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string(),
+            role: z.string(),
+            bio: z.string(),
+            avatar: z.string(),
+            usingFallback: z.boolean(),
+          }),
+        },
+      },
+    },
+  },
   sensors: {
     list: {
       method: 'GET' as const,

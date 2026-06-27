@@ -46,5 +46,14 @@ if (!databaseUrl) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
 
-export const pool = new Pool({ connectionString: databaseUrl });
+const poolConfig: pg.PoolConfig = {
+  connectionString: databaseUrl,
+};
+
+if (databaseUrl.includes("supabase.co") || process.env.PGSSLMODE === "require") {
+  poolConfig.ssl = { rejectUnauthorized: false };
+  poolConfig.family = 4;
+}
+
+export const pool = new Pool(poolConfig);
 export const db = drizzle(pool, { schema });

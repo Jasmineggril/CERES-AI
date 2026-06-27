@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/Button";
-
-const STORAGE_KEY = "ceres-settings";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { api } from "@shared/routes";
 
 const defaultSettings = {
   firstName: "",
@@ -22,24 +23,68 @@ const defaultSettings = {
 
 type SettingsState = typeof defaultSettings;
 
+type ProfileResponse = SettingsState & { usingFallback: boolean };
+
 export default function Settings() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = React.useState("perfil");
   const [settings, setSettings] = React.useState<SettingsState>(defaultSettings);
-  const [isSaving, setIsSaving] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
+  const { data, isLoading, isError, error } = useQuery<ProfileResponse>({
+    queryKey: [api.user.profile.get.path],
+    queryFn: async () => {
+      const res = await apiRequest(api.user.profile.get.method, api.user.profile.get.path);
+      return await res.json();
+    },
+    retry: false,
+  });
+
   React.useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setSettings({ ...defaultSettings, ...parsed });
-      } catch {
-        setSettings(defaultSettings);
-      }
+    if (data) {
+      setSettings({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: data.role,
+        bio: data.bio,
+        avatar: data.avatar,
+      });
     }
-  }, []);
+  }, [data]);
+
+  const mutation = useMutation({
+    mutationFn: async (payload: SettingsState) => {
+      const res = await apiRequest(api.user.profile.update.method, api.user.profile.update.path, payload);
+      return await res.json();
+    },
+    onSuccess: (updated: ProfileResponse) => {
+      setSettings({
+        firstName: updated.firstName,
+        lastName: updated.lastName,
+        email: updated.email,
+        role: updated.role,
+        bio: updated.bio,
+        avatar: updated.avatar,
+      });
+      queryClient.invalidateQueries({ queryKey: [api.user.profile.get.path] });
+      toast({
+        title: "Configurações salvas",
+        description: "Seus dados foram atualizados com sucesso.",
+      });
+    },
+    onError: (err: unknown) => {
+      toast({
+        title: "Erro ao salvar",
+        description:
+          err instanceof Error
+            ? err.message
+            : "Não foi possível atualizar suas configurações. Tente novamente.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleInputChange = (key: keyof SettingsState) => (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -70,24 +115,11 @@ export default function Settings() {
     }
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      toast({
-        title: "Configurações salvas",
-        description: "Seus dados foram atualizados com sucesso.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro ao salvar",
-        description: "Não foi possível armazenar suas configurações.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
+  const handleSave = () => {
+    mutation.mutate(settings);
   };
+
+  const dbOffline = data?.usingFallback ?? false;
 
   return (
     <Layout>
@@ -100,6 +132,25 @@ export default function Settings() {
             </p>
           </div>
         </div>
+
+        {dbOffline && (
+          <div className="rounded-3xl border border-amber-300 bg-amber-50 p-6 text-amber-900 shadow-sm">
+            <p className="font-semibold">Banco de dados em modo offline</p>
+            <p className="mt-2 text-sm text-amber-900/80">
+              O servidor está usando armazenamento temporário enquanto a conexão ao banco de dados não está disponível.
+              As alterações serão preservadas no backend, mas podem ser transitórias até a reconexão.
+            </p>
+          </div>
+        )}
+
+        {isError && (
+          <div className="rounded-3xl border border-red-300 bg-red-50 p-6 text-red-900 shadow-sm">
+            <p className="font-semibold">Erro ao carregar configurações</p>
+            <p className="mt-2 text-sm text-red-900/80">
+              Não foi possível carregar seus dados de perfil. Tente atualizar a página ou faça login novamente.
+            </p>
+          </div>
+        )}
 
         <div className="rounded-3xl bg-card border border-border/50 p-6 shadow-sm">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -210,7 +261,7 @@ export default function Settings() {
               </div>
 
               <div className="mt-6 flex justify-end">
-                <Button type="button" onClick={handleSave} isLoading={isSaving}>
+                <Button type="button" onClick={handleSave} isLoading={mutation.isLoading}>
                   Salvar alterações
                 </Button>
               </div>
