@@ -92,26 +92,7 @@ export default function Login() {
         source: "server",
       });
 
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("id, name, email")
-        .eq("id", authData.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        const message = String(profileError.message ?? "").toLowerCase();
-        if (!message.includes("does not exist") && !message.includes("relation")) {
-          console.error("Erro ao buscar perfil no login:", profileError);
-          setError(getLoginErrorMessage(profileError));
-          return;
-        }
-      }
-
-      if (!profileData) {
-        setStatusMessage("Login realizado com sucesso. O perfil pode ser criado posteriormente.");
-      } else {
-        setStatusMessage("Login realizado com sucesso.");
-      }
+      setStatusMessage("Login realizado com sucesso.");
       setLocation("/dashboard");
     } catch (error) {
       console.error("Erro no login:", error);

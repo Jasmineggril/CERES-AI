@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const AUTH_STORAGE_KEY = "ceres-auth-session";
 const LOCAL_USERS_STORAGE_KEY = "ceres-local-users";
@@ -121,23 +122,22 @@ export function useAuthStatus() {
     queryFn: async () => {
       const localSession = readStoredAuthSession();
 
-      try {
-        const res = await fetch("/api/auth/status");
-        if (res.ok) {
-          const payload = await res.json();
-          if (payload?.email) {
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data: user, error } = await supabase.auth.getUser();
+          if (!error && user?.user) {
             const session = {
-              userId: payload.userId ?? Date.now(),
-              email: payload.email,
-              name: payload.name || payload.email.split("@")[0],
+              userId: user.user.id,
+              email: user.user.email ?? "",
+              name: user.user.user_metadata?.full_name ?? user.user.email?.split("@")[0] ?? "",
               source: "server" as const,
             };
             writeStoredAuthSession(session);
             return session;
           }
+        } catch {
+          // keep fallback to local session
         }
-      } catch {
-        // Keeps local fallback active when the API is unavailable.
       }
 
       return localSession;
@@ -150,10 +150,12 @@ export function useAuthStatus() {
 export function useLogout() {
   return useMutation({
     mutationFn: async () => {
-      try {
-        await fetch("/api/auth/logout", { method: "POST" });
-      } catch {
-        // Ignore network errors and continue with local logout.
+      if (isSupabaseConfigured && supabase) {
+        try {
+          await supabase.auth.signOut();
+        } catch {
+          // ignore network errors and continue with local logout
+        }
       }
       clearStoredAuthSession();
     },

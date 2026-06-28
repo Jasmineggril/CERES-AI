@@ -107,6 +107,22 @@ export default function Signup() {
       }
 
       if (!authData.user) {
+        const localSession = authenticateLocally({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          createIfMissing: true,
+        });
+
+        if (localSession) {
+          writeStoredAuthSession(localSession);
+          setStatusMessage(
+            "O cadastro foi registrado localmente. Caso o Supabase não permita confirmação por e-mail, use login local ou tente novamente mais tarde."
+          );
+          setLocation("/dashboard");
+          return;
+        }
+
         setError("O cadastro não retornou um usuário válido.");
         return;
       }
