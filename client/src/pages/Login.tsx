@@ -70,10 +70,17 @@ export default function Login() {
         return;
       }
 
-      if (!authData.session) {
+      if (!authData.user) {
         setError("Não foi possível abrir uma sessão válida para este usuário.");
         return;
       }
+
+      writeStoredAuthSession({
+        userId: authData.user.id,
+        email: authData.user.email ?? email,
+        name: authData.user.user_metadata?.full_name ?? authData.user.email?.split("@")[0] ?? email,
+        source: "server",
+      });
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")

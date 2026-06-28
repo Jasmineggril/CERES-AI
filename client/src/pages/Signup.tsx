@@ -92,6 +92,13 @@ export default function Signup() {
         return;
       }
 
+      writeStoredAuthSession({
+        userId: authData.user.id,
+        email: authData.user.email ?? formData.email,
+        name: authData.user.user_metadata?.full_name ?? formData.name,
+        source: "server",
+      });
+
       const { error: profileError } = await supabase.from("profiles").insert({
         id: authData.user.id,
         email: formData.email,

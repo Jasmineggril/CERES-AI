@@ -42,18 +42,24 @@ const getDatabaseUrl = (): string => {
 
 const databaseUrl = getDatabaseUrl();
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
-}
-
 const poolConfig: pg.PoolConfig & { family?: number } = {
   connectionString: databaseUrl,
 };
 
-if (databaseUrl.includes("supabase.co") || process.env.PGSSLMODE === "require") {
+if (databaseUrl && (databaseUrl.includes("supabase.co") || process.env.PGSSLMODE === "require")) {
   poolConfig.ssl = { rejectUnauthorized: false };
   poolConfig.family = 4;
 }
 
-export const pool = new Pool(poolConfig);
-export const db = drizzle(pool, { schema });
+const createFallbackDb = () => {
+  const error = new Error("Database not configured: using in-memory fallback");
+  const handler: ProxyHandler<any> = {
+    get() {
+      return () => Promise.reject(error);
+    },
+  };
+  return new Proxy({}, handler) as any;
+};
+
+export const pool = databaseUrl ? new Pool(poolConfig) : undefined;
+export const db = databaseUrl ? drizzle(pool as pg.Pool, { schema }) : createFallbackDb();

@@ -5,7 +5,7 @@ const AUTH_STORAGE_KEY = "ceres-auth-session";
 const LOCAL_USERS_STORAGE_KEY = "ceres-local-users";
 
 export interface AuthUser {
-  userId: number;
+  userId: number | string;
   email: string;
   name: string;
   source: "local" | "server";
