@@ -136,8 +136,14 @@ export function useAuthStatus() {
             return session;
           }
         } catch {
-          // keep fallback to local session
+          // keep fallback to local session only when Supabase is not available
         }
+
+        if (localSession?.source === "local") {
+          return localSession;
+        }
+
+        return null;
       }
 
       return localSession;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { useAlerts } from "@/hooks/use-alerts";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { format } from "date-fns";
 
 type AlertSeverity = 'critical' | 'medium' | 'low';
@@ -22,33 +22,117 @@ export default function Reports() {
     return true;
   });
 
+  const sampleReports = filteredAlerts.length > 0 ? filteredAlerts : [
+    {
+      id: "RPT-001",
+      title: "Diagnóstico CAR - Propriedade Central",
+      message: "Pendências de Reserva Legal e sobreposição de uso do solo.",
+      severity: "critical",
+      isResolved: false,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "RPT-002",
+      title: "Relatório Simplificado - Fazenda Verde",
+      message: "Alerta de licença ambiental e declaração SICAR incompleta.",
+      severity: "medium",
+      isResolved: false,
+      createdAt: new Date().toISOString(),
+    },
+  ];
+
+  const reports = sampleReports;
+
   const handleExportCSV = () => {
     const csv = [
-      ["ID", "Título", "Mensagem", "Severidade", "Status", "Data"],
-      ...filteredAlerts.map(a => [
-        a.id,
-        a.title,
-        a.message,
-        a.severity,
-        a.isResolved ? "Resolvido" : "Aberto",
-        a.createdAt ? format(new Date(a.createdAt), "dd/MM/yyyy HH:mm") : "N/A",
+      ["ID", "Relatório", "Resumo", "Prioridade", "Status", "Data"],
+      ...reports.map(r => [
+        r.id,
+        r.title,
+        r.message,
+        r.severity,
+        r.isResolved ? "Resolvido" : "Aberto",
+        r.createdAt ? format(new Date(r.createdAt), "dd/MM/yyyy HH:mm") : "N/A",
       ]),
     ]
-      .map(row => row.map(cell => `"${cell}"`).join(","))
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
       .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `relatorio_alertas_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `relatorios_ceres_ai_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
+
+  const createPdf = (type: "completo" | "simplificado") => {
+    const now = new Date();
+    const lines = [
+      "CERES AI — haCARthon 2026",
+      "Relatório " + (type === "completo" ? "Completo" : "Simplificado"),
+      "Data: " + format(now, "dd/MM/yyyy HH:mm"),
+      "",
+      "Nome da propriedade: Fazenda Modelo",
+      "Município/UF: Alto Paraíso de Goiás / GO",
+      "Score de conformidade: 78%",
+      "Pendências encontradas: Reserva Legal, Área de Preservação Permanente, Declaração SICAR.",
+      "Recomendações: Atualizar documentação, ajustar limites e regularizar APP.",
+      "",
+      "Assinatura: CERES AI — haCARthon 2026",
+      "",
+      "Dados simulados para demonstração.",
+    ];
+
+    const escapeText = (text: string) =>
+      text.replace(/([\\()])/g, "\\$1");
+
+    const bodyLines = lines.map((line, index) => {
+      const y = 760 - index * 18;
+      return `BT /F1 12 Tf 50 ${y} Td (${escapeText(line)}) Tj ET`;
+    });
+
+    const body = bodyLines.join("\n");
+    const stream = `${body}\n`;
+    const length = new TextEncoder().encode(stream).length;
+
+    const pdfParts = [
+      "%PDF-1.3\n",
+      "1 0 obj << /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+      "2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+      "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n",
+      `4 0 obj << /Length ${length} >>\nstream\n${stream}endstream\nendobj\n`,
+      "5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+    ];
+
+    let offset = 0;
+    const xrefEntries = ["0000000000 65535 f \n"];
+    const bodies: string[] = [];
+
+    for (const part of pdfParts) {
+      const padded = String(offset).padStart(10, "0");
+      xrefEntries.push(`${padded} 00000 n \n`);
+      bodies.push(part);
+      offset += new TextEncoder().encode(part).length;
+    }
+
+    const xrefStart = offset;
+    const xref = `xref\n0 ${pdfParts.length + 1}\n${xrefEntries.join("")}`;
+    const trailer = `trailer << /Size ${pdfParts.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF\n`;
+    const pdf = pdfParts.join("") + xref + trailer;
+
+    const blob = new Blob([pdf], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `relatorio_${type}_${new Date().toISOString().split('T')[0]}.pdf`;
     a.click();
   };
 
   const stats = {
-    total: filteredAlerts.length,
-    critical: filteredAlerts.filter(a => a.severity === "critical").length,
-    unresolved: filteredAlerts.filter(a => !a.isResolved).length,
+    total: reports.length,
+    critical: reports.filter(r => r.severity === "critical").length,
+    unresolved: reports.filter(r => !r.isResolved).length,
   };
 
   return (
@@ -59,14 +143,20 @@ export default function Reports() {
             <h1 className="text-3xl font-bold font-display">Relatórios</h1>
             <p className="text-muted-foreground mt-1">Análise de alertas e eventos do sistema</p>
           </div>
+        <div className="flex flex-wrap gap-3">
           <Button onClick={handleExportCSV} data-testid="button-export-csv">
             <Download className="w-4 h-4 mr-2" />
             Exportar CSV
           </Button>
+          <Button onClick={() => createPdf("completo")} variant="outline" data-testid="button-export-pdf-full">
+            <FileText className="w-4 h-4 mr-2" />
+            PDF Completo
+          </Button>
+          <Button onClick={() => createPdf("simplificado")} variant="outline" data-testid="button-export-pdf-simple">
+            <FileText className="w-4 h-4 mr-2" />
+            PDF Simplificado
+          </Button>
         </div>
-
-        {/* Filtros */}
-        <div className="bg-card rounded-2xl border border-border/50 p-6">
           <div className="flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1">
               <label className="block text-sm font-medium mb-2">Severidade</label>

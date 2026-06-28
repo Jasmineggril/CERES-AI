@@ -14,6 +14,7 @@ import Reports from "@/pages/Reports";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import ResetPassword from "@/pages/ResetPassword";
 import CeresMaps from "@/pages/CeresMaps";
 import CeresInsights from "@/pages/CeresInsights";
 import Gamificacao from "@/pages/Gamificacao";
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/simulacao" component={SimulacaoCar} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/sensors" component={() => <ProtectedRoute component={Sensors} />} />

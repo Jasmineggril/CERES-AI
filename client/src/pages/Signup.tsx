@@ -4,30 +4,34 @@ import { AlertTriangle, ArrowLeft, Leaf } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
+function isPasswordStrong(password: string) {
+  return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
+}
+
 function getSignupErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
-    const message = String((error as { message?: string }).message ?? "");
-    if (message.toLowerCase().includes("user already registered") || message.toLowerCase().includes("already registered")) {
-      return "Este e-mail já está cadastrado.";
+    const message = String((error as { message?: string }).message ?? "").toLowerCase();
+    if (message.includes("user already registered") || message.includes("already registered") || message.includes("duplicate")) {
+      return "Este e-mail já está cadastrado. Faça login ou redefina sua senha.";
     }
-    if (message.toLowerCase().includes("password") && message.toLowerCase().includes("least")) {
-      return "A senha deve ter pelo menos 6 caracteres.";
+    if (message.includes("invalid email") || message.includes("invalid input value") || message.includes("invalid login credentials")) {
+      return "Verifique o e-mail e tente novamente.";
     }
-      if (message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url") || message.toLowerCase().includes("missing environment variable")) {
+    if (message.includes("password") && (message.includes("least") || message.includes("weak"))) {
+      return "Use uma senha mais forte, com pelo menos 8 caracteres, letra maiúscula, letra minúscula, número e símbolo.";
+    }
+    if (message.includes("missing environment variable") || message.includes("invalid api key") || message.includes("invalid url")) {
       return "A configuração do Supabase está incorreta. Verifique VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.";
     }
-    if (message.toLowerCase().includes("email rate limit") || message.toLowerCase().includes("over_email_send_rate_limit")) {
-      return "O limite de envio de e-mail de confirmação foi atingido. Você pode tentar novamente em alguns minutos ou usar o modo local de autenticação.";
+    if (message.includes("network")) {
+      return "Erro de conexão. Tente novamente.";
     }
-    if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("rls")) {
-      return "Não foi possível criar o perfil por causa de uma política de segurança do Supabase.";
-    }
-    if (message.toLowerCase().includes("profiles") && message.toLowerCase().includes("does not exist")) {
-      return "A tabela profiles ainda não existe no projeto Supabase.";
+    if (message.includes("email rate limit") || message.includes("over_email_send_rate_limit")) {
+      return "Não foi possível enviar o email de confirmação. Tente novamente em alguns minutos.";
     }
   }
 
-  return "Não foi possível criar a conta no momento.";
+  return "Não foi possível concluir o cadastro. Verifique sua conexão e tente novamente.";
 }
 
 export default function Signup() {
@@ -43,11 +47,16 @@ export default function Signup() {
     setStatusMessage("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("As senhas não coincidem");
+      setError("As senhas não coincidem.");
       return;
     }
-    if (formData.password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres");
+    if (!isPasswordStrong(formData.password)) {
+      setError("Use uma senha mais forte, com pelo menos 8 caracteres, letra maiúscula, letra minúscula, número e símbolo.");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      setError("O nome completo é obrigatório.");
       return;
     }
 
@@ -85,38 +94,34 @@ export default function Signup() {
         },
       });
 
-      const rawSignupMessage = String(authError?.message ?? "").toLowerCase();
-      const shouldFallbackLocal = rawSignupMessage.includes("email rate limit") ||
-        rawSignupMessage.includes("over_email_send_rate_limit") ||
-        rawSignupMessage.includes("missing environment variable") ||
-        rawSignupMessage.includes("invalid api key") ||
-        rawSignupMessage.includes("invalid url") ||
-        rawSignupMessage.includes("row-level security") ||
-        rawSignupMessage.includes("rls");
-
       if (authError) {
-        if (shouldFallbackLocal) {
-          const localSession = authenticateLocally({
-            email: formData.email,
-            password: formData.password,
-            name: formData.name,
-            createIfMissing: true,
-          });
-
-          if (localSession) {
-            writeStoredAuthSession(localSession);
-            setStatusMessage("Cadastro criado localmente. Você pode entrar sem depender de confirmação por e-mail.");
-            setLocation("/dashboard");
-            return;
-          }
-        }
-
+        console.error("Erro no cadastro:", authError);
         setError(getSignupErrorMessage(authError));
         return;
       }
 
       const signupUser = authData.user ?? authData.session?.user;
       if (!signupUser) {
+        console.error("Erro no cadastro: usuário não retornado", authData);
+        setError("Não foi possível concluir o cadastro. Verifique sua conexão e tente novamente.");
+        return;
+      }
+
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          id: signupUser.id,
+          email: formData.email,
+          name: formData.name,
+        },
+        { onConflict: "id" }
+      );
+
+      if (profileError) {
+        console.error("Erro ao salvar perfil:", profileError);
+      }
+
+      const needsConfirmation = !authData.session;
+      if (needsConfirmation) {
         const localSession = authenticateLocally({
           email: formData.email,
           password: formData.password,
@@ -126,55 +131,23 @@ export default function Signup() {
 
         if (localSession) {
           writeStoredAuthSession(localSession);
-          setStatusMessage("Conta registrada localmente. Você pode entrar sem depender do e-mail de confirmação.");
+          setStatusMessage(
+            "Conta criada com sucesso. Acesso local liberado enquanto a confirmação por email é concluída."
+          );
           setLocation("/dashboard");
           return;
         }
 
-        setError("O cadastro não retornou um usuário válido.");
+        setStatusMessage("Conta criada com sucesso. Verifique seu email para confirmar o cadastro.");
         return;
       }
 
-      const localSession = authenticateLocally({
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-        createIfMissing: true,
+      writeStoredAuthSession({
+        userId: signupUser.id,
+        email: signupUser.email ?? formData.email,
+        name: signupUser.user_metadata?.full_name ?? formData.name,
+        source: "server",
       });
-
-      if (!localSession) {
-        setError("Não foi possível criar a conta local.");
-        return;
-      }
-
-      writeStoredAuthSession(localSession);
-
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: signupUser.id,
-        email: formData.email,
-        name: formData.name,
-      });
-
-      if (profileError) {
-        const message = String(profileError.message ?? "").toLowerCase();
-        if (message.includes("does not exist") || message.includes("relation")) {
-          console.warn("Supabase profiles table unavailable:", profileError.message);
-        } else if (
-          message.includes("row-level security") ||
-          message.includes("rls") ||
-          message.includes("permission denied") ||
-          message.includes("política de segurança")
-        ) {
-          console.warn("Supabase profile insert blocked by policy:", profileError.message);
-          setStatusMessage(
-            "Conta criada com sucesso. O perfil do Supabase não pôde ser gravado por políticas de segurança, mas o login funciona normalmente."
-          );
-        } else {
-          console.error("Erro ao criar profile:", profileError);
-          setError(getSignupErrorMessage(profileError));
-          return;
-        }
-      }
 
       setStatusMessage("Conta criada com sucesso. Redirecionando...");
       setLocation("/dashboard");

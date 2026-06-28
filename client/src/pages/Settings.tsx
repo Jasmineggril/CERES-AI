@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/ui/switch";
 import { useAuthStatus, useLogout } from "@/hooks/use-auth";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "ceres-profile-settings";
 
@@ -88,64 +89,85 @@ export default function Settings() {
   }, [user?.email, user?.name]);
 
   React.useEffect(() => {
-    if (!user?.email) return;
+    if (!user?.userId || !isSupabaseConfigured) return;
+    const supabaseClient = supabase;
+    if (!supabaseClient) {
+      setSyncMode("local");
+      return;
+    }
 
     const loadServerProfile = async () => {
       try {
-        const response = await fetch("/api/user/profile");
-        if (!response.ok) return;
+        const { data, error } = await supabaseClient
+          .from("profiles")
+          .select("name, role, state, municipality, avatar, alerts, legislation, language, appearance, highContrast")
+          .eq("id", user.userId)
+          .single();
 
-        const payload = await response.json() as {
-          firstName?: string;
-          lastName?: string;
-          email?: string;
-          role?: string;
-          avatar?: string;
-        };
+        if (error) {
+          console.error("Erro ao carregar perfil do Supabase:", error);
+          setSyncMode("local");
+          return;
+        }
 
-        const fullName = [payload.firstName, payload.lastName].filter(Boolean).join(" ").trim();
-        setSettings((current) => ({
-          ...current,
-          email: payload.email || current.email,
-          fullName: fullName || current.fullName,
-          role: (payload.role as UserRole) || current.role,
-          avatar: payload.avatar || current.avatar,
-        }));
-      } catch {
-        // Mantém o modo local quando o backend não estiver disponível.
+        if (data) {
+          setSettings((current) => ({
+            ...current,
+            fullName: String(data.name ?? current.fullName),
+            role: (data.role as UserRole) || current.role,
+            state: String(data.state ?? current.state),
+            municipality: String(data.municipality ?? current.municipality),
+            avatar: String(data.avatar ?? current.avatar),
+            alerts: typeof data.alerts === "boolean" ? data.alerts : current.alerts,
+            legislation: typeof data.legislation === "boolean" ? data.legislation : current.legislation,
+            language: (data.language as LanguagePreference) || current.language,
+            appearance: (data.appearance as AppearancePreference) || current.appearance,
+            highContrast: typeof data.highContrast === "boolean" ? data.highContrast : current.highContrast,
+          }));
+          setSyncMode("server");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar perfil do Supabase:", error);
+        setSyncMode("local");
       }
     };
 
     void loadServerProfile();
-  }, [user?.email]);
+  }, [user?.userId]);
 
   const persistSettings = async (nextSettings: SettingsState) => {
     const storageKey = nextSettings.email ? `${STORAGE_KEY}:${nextSettings.email}` : STORAGE_KEY;
     window.localStorage.setItem(storageKey, JSON.stringify(nextSettings));
 
-    const fullNameParts = nextSettings.fullName.trim().split(/\s+/).filter(Boolean);
-    const firstName = fullNameParts.shift() || "";
-    const lastName = fullNameParts.join(" ");
+    if (isSupabaseConfigured && supabase && user?.source === "server") {
+      try {
+        const response = await supabase.from("profiles").upsert(
+          {
+            id: user.userId,
+            email: nextSettings.email,
+            name: nextSettings.fullName,
+            role: nextSettings.role,
+            state: nextSettings.state,
+            municipality: nextSettings.municipality,
+            avatar: nextSettings.avatar || "",
+            alerts: nextSettings.alerts,
+            legislation: nextSettings.legislation,
+            language: nextSettings.language,
+            appearance: nextSettings.appearance,
+            highContrast: nextSettings.highContrast,
+          },
+          { onConflict: "id" }
+        );
 
-    try {
-      const response = await fetch("/api/user/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email: nextSettings.email,
-          role: nextSettings.role,
-          avatar: nextSettings.avatar || "",
-        }),
-      });
+        if (!response.error) {
+          setSyncMode("server");
+          return "server" as const;
+        }
 
-      if (response.ok) {
-        setSyncMode("server");
-        return "server" as const;
+        console.error("Erro ao salvar perfil no Supabase:", response.error);
+      } catch (error) {
+        console.error("Erro ao salvar perfil no Supabase:", error);
       }
-    } catch {
-      // Fallback local quando o servidor não estiver disponível.
     }
 
     setSyncMode("local");

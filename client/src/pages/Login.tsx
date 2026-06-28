@@ -6,25 +6,28 @@ import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 
 function getLoginErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
-    const message = String((error as { message?: string }).message ?? "");
-    if (message.toLowerCase().includes("invalid login credentials") || message.toLowerCase().includes("invalid credentials")) {
-      return "E-mail ou senha incorretos.";
+    const message = String((error as { message?: string }).message ?? "").toLowerCase();
+    if (message.includes("invalid login credentials") || message.includes("invalid credentials") || message.includes("invalid password")) {
+      return "Email ou senha incorretos.";
     }
-    if (message.toLowerCase().includes("user not found")) {
+    if (message.includes("user not found")) {
       return "Usuário não encontrado. Crie uma conta para continuar.";
     }
-    if (message.toLowerCase().includes("missing environment variable") || message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url")) {
+    if (message.includes("email not confirmed") || message.includes("email_not_confirmed")) {
+      return "Confirme seu email antes de entrar.";
+    }
+    if (message.includes("missing environment variable") || message.includes("invalid api key") || message.includes("invalid url")) {
       return "A configuração do Supabase está incompleta. Verifique as variáveis VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.";
     }
-    if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("rls")) {
-      return "O acesso ao perfil foi bloqueado por uma política de segurança. Verifique as políticas do Supabase.";
+    if (message.includes("network")) {
+      return "Erro de conexão. Tente novamente.";
     }
-    if (message.toLowerCase().includes("profile") && message.toLowerCase().includes("not found")) {
+    if (message.includes("profile") && message.includes("not found")) {
       return "Não foi possível localizar o perfil do usuário.";
     }
   }
 
-  return "Não foi possível entrar no momento.";
+  return "Erro de conexão. Tente novamente.";
 }
 
 export default function Login() {
@@ -42,16 +45,16 @@ export default function Login() {
     setStatusMessage("");
 
     try {
-      const localSession = authenticateLocally({ email, password, createIfMissing: false });
-      if (localSession) {
+      if (!isSupabaseConfigured) {
+        const localSession = authenticateLocally({ email, password, createIfMissing: false });
+        if (!localSession) {
+          setError("Email ou senha incorretos.");
+          return;
+        }
+
         writeStoredAuthSession(localSession);
         setStatusMessage("Login realizado com sucesso em modo local.");
         setLocation("/dashboard");
-        return;
-      }
-
-      if (!isSupabaseConfigured) {
-        setError("E-mail ou senha incorretos.");
         return;
       }
 
@@ -61,28 +64,21 @@ export default function Login() {
       }
 
       const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-      const rawMessage = String(error?.message ?? "").toLowerCase();
-      const isEmailNotConfirmed = rawMessage.includes("email not confirmed") || rawMessage.includes("email_not_confirmed");
-
       if (error) {
-        if (isEmailNotConfirmed) {
-          const fallbackSession = authenticateLocally({ email, password, createIfMissing: true });
-          if (fallbackSession) {
-            writeStoredAuthSession(fallbackSession);
-            setStatusMessage("Login autorizado localmente. O e-mail não está confirmado, mas você pode entrar normalmente.");
+        console.error("Erro no login:", error);
+        const rawMessage = String(error.message ?? "").toLowerCase();
+        const isNetworkError = rawMessage.includes("network") || rawMessage.includes("fetch");
+        if (isNetworkError) {
+          const localSession = authenticateLocally({ email, password, createIfMissing: false });
+          if (localSession) {
+            writeStoredAuthSession(localSession);
+            setStatusMessage("Login realizado em modo local como fallback.");
             setLocation("/dashboard");
             return;
           }
-        }
-
-        const fallbackLocal = authenticateLocally({ email, password, createIfMissing: false });
-        if (fallbackLocal) {
-          writeStoredAuthSession(fallbackLocal);
-          setStatusMessage("Login realizado em modo local como fallback.");
-          setLocation("/dashboard");
+          setError("Erro de conexão. Tente novamente.");
           return;
         }
-
         setError(getLoginErrorMessage(error));
         return;
       }
@@ -93,20 +89,26 @@ export default function Login() {
         return;
       }
 
+      let profileName = user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? email;
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Erro ao buscar perfil:", profileError);
+      } else if (profile?.name) {
+        profileName = profile.name;
+      }
+
       const session = {
         userId: user.id,
         email: user.email ?? email,
-        name: user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? email,
+        name: profileName,
         source: "server" as const,
       };
       writeStoredAuthSession(session);
-
-      authenticateLocally({
-        email,
-        password,
-        name: session.name,
-        createIfMissing: true,
-      });
 
       setStatusMessage("Login realizado com sucesso.");
       setLocation("/dashboard");
@@ -212,6 +214,15 @@ export default function Login() {
                 required
                 data-testid="input-password"
               />
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setLocation("/reset-password")}
+                className="text-sm font-medium text-[#0F5132] hover:underline"
+              >
+                Esqueci minha senha
+              </button>
             </div>
             <button
               type="submit"
