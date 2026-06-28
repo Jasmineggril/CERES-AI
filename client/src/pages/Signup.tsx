@@ -157,7 +157,19 @@ export default function Signup() {
 
       if (profileError) {
         const message = String(profileError.message ?? "").toLowerCase();
-        if (!message.includes("does not exist") && !message.includes("relation")) {
+        if (message.includes("does not exist") || message.includes("relation")) {
+          console.warn("Supabase profiles table unavailable:", profileError.message);
+        } else if (
+          message.includes("row-level security") ||
+          message.includes("rls") ||
+          message.includes("permission denied") ||
+          message.includes("política de segurança")
+        ) {
+          console.warn("Supabase profile insert blocked by policy:", profileError.message);
+          setStatusMessage(
+            "Conta criada com sucesso. O perfil do Supabase não pôde ser gravado por políticas de segurança, mas o login funciona normalmente."
+          );
+        } else {
           console.error("Erro ao criar profile:", profileError);
           setError(getSignupErrorMessage(profileError));
           return;

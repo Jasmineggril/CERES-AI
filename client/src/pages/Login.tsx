@@ -42,16 +42,16 @@ export default function Login() {
     setStatusMessage("");
 
     try {
-      if (!isSupabaseConfigured) {
-        const localSession = authenticateLocally({ email, password, createIfMissing: false });
-        if (!localSession) {
-          setError("E-mail ou senha incorretos.");
-          return;
-        }
-
+      const localSession = authenticateLocally({ email, password, createIfMissing: false });
+      if (localSession) {
         writeStoredAuthSession(localSession);
         setStatusMessage("Login realizado com sucesso em modo local.");
         setLocation("/dashboard");
+        return;
+      }
+
+      if (!isSupabaseConfigured) {
+        setError("E-mail ou senha incorretos.");
         return;
       }
 
@@ -61,55 +61,50 @@ export default function Login() {
       }
 
       const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-
-      const rawLoginMessage = String(error?.message ?? "").toLowerCase();
-      const shouldFallbackLocal = rawLoginMessage.includes("email not confirmed") ||
-        rawLoginMessage.includes("email_not_confirmed") ||
-        rawLoginMessage.includes("missing environment variable") ||
-        rawLoginMessage.includes("invalid api key") ||
-        rawLoginMessage.includes("invalid url") ||
-        rawLoginMessage.includes("row-level security") ||
-        rawLoginMessage.includes("rls");
+      const rawMessage = String(error?.message ?? "").toLowerCase();
+      const isEmailNotConfirmed = rawMessage.includes("email not confirmed") || rawMessage.includes("email_not_confirmed");
 
       if (error) {
-        if (shouldFallbackLocal) {
-          const localSession = authenticateLocally({ email, password, createIfMissing: false });
-          if (localSession) {
-            writeStoredAuthSession(localSession);
-            setStatusMessage("Login realizado em modo local como fallback.");
+        if (isEmailNotConfirmed) {
+          const fallbackSession = authenticateLocally({ email, password, createIfMissing: true });
+          if (fallbackSession) {
+            writeStoredAuthSession(fallbackSession);
+            setStatusMessage("Login autorizado localmente. O e-mail não está confirmado, mas você pode entrar normalmente.");
             setLocation("/dashboard");
             return;
           }
+        }
+
+        const fallbackLocal = authenticateLocally({ email, password, createIfMissing: false });
+        if (fallbackLocal) {
+          writeStoredAuthSession(fallbackLocal);
+          setStatusMessage("Login realizado em modo local como fallback.");
+          setLocation("/dashboard");
+          return;
         }
 
         setError(getLoginErrorMessage(error));
         return;
       }
 
-      if (!authData.user) {
-        const localSession = authenticateLocally({ email, password, createIfMissing: false });
-        if (localSession) {
-          writeStoredAuthSession(localSession);
-          setStatusMessage("Login realizado localmente como fallback.");
-          setLocation("/dashboard");
-          return;
-        }
-
+      const user = authData.user ?? authData.session?.user;
+      if (!user) {
         setError("Não foi possível abrir uma sessão válida para este usuário.");
         return;
       }
 
-      writeStoredAuthSession({
-        userId: authData.user.id,
-        email: authData.user.email ?? email,
-        name: authData.user.user_metadata?.full_name ?? authData.user.email?.split("@")[0] ?? email,
-        source: "server",
-      });
+      const session = {
+        userId: user.id,
+        email: user.email ?? email,
+        name: user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? email,
+        source: "server" as const,
+      };
+      writeStoredAuthSession(session);
 
       authenticateLocally({
         email,
         password,
-        name: authData.user.user_metadata?.full_name ?? authData.user.email?.split("@")[0] ?? email,
+        name: session.name,
         createIfMissing: true,
       });
 
