@@ -13,8 +13,11 @@ function getSignupErrorMessage(error: unknown): string {
     if (message.toLowerCase().includes("password") && message.toLowerCase().includes("least")) {
       return "A senha deve ter pelo menos 6 caracteres.";
     }
-    if (message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url") || message.toLowerCase().includes("missing environment variable")) {
+      if (message.toLowerCase().includes("invalid api key") || message.toLowerCase().includes("invalid url") || message.toLowerCase().includes("missing environment variable")) {
       return "A configuração do Supabase está incorreta. Verifique VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.";
+    }
+    if (message.toLowerCase().includes("email rate limit") || message.toLowerCase().includes("over_email_send_rate_limit")) {
+      return "O limite de envio de e-mail de confirmação foi atingido. Você pode tentar novamente em alguns minutos ou usar o modo local de autenticação.";
     }
     if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("rls")) {
       return "Não foi possível criar o perfil por causa de uma política de segurança do Supabase.";
@@ -83,7 +86,23 @@ export default function Signup() {
       });
 
       if (authError) {
-        setError(getSignupErrorMessage(authError));
+        const signupError = getSignupErrorMessage(authError);
+        if (signupError.includes("limite de envio de e-mail") || signupError.includes("Supabase está incorreta")) {
+          // fallback para modo local quando o Supabase estiver temporariamente indisponível
+          const localSession = authenticateLocally({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+            createIfMissing: true,
+          });
+          if (localSession) {
+            writeStoredAuthSession(localSession);
+            setStatusMessage("Cadastro criado localmente pelo fallback. Acesse /login para entrar.");
+            setLocation("/dashboard");
+            return;
+          }
+        }
+        setError(signupError);
         return;
       }
 
@@ -102,7 +121,7 @@ export default function Signup() {
       const { error: profileError } = await supabase.from("profiles").insert({
         id: authData.user.id,
         email: formData.email,
-        full_name: formData.name,
+        name: formData.name,
       });
 
       if (profileError) {

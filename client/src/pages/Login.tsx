@@ -66,7 +66,17 @@ export default function Login() {
       const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        setError(getLoginErrorMessage(error));
+        const loginError = getLoginErrorMessage(error);
+        if (loginError.includes("Supabase está incompleta") || loginError.includes("bloqueado por uma política de segurança")) {
+          const localSession = authenticateLocally({ email, password, createIfMissing: false });
+          if (localSession) {
+            writeStoredAuthSession(localSession);
+            setStatusMessage("Login realizado em modo local como fallback.");
+            setLocation("/dashboard");
+            return;
+          }
+        }
+        setError(loginError);
         return;
       }
 
@@ -84,7 +94,7 @@ export default function Login() {
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("id, full_name, email")
+        .select("id, name, email")
         .eq("id", authData.user.id)
         .maybeSingle();
 
