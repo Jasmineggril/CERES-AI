@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { useSensors, useDeleteSensor } from "@/hooks/use-sensors";
+import { useAlerts } from "@/hooks/use-alerts";
 import { Button } from "@/components/ui/button";
 import { Trash2, Download } from "lucide-react";
 
 export default function Admin() {
   const { data: sensors = [] } = useSensors();
+  const { data: alerts = [] } = useAlerts();
   const deleteSensor = useDeleteSensor();
 
   const handleExportSensors = () => {
@@ -24,12 +26,15 @@ export default function Admin() {
     a.click();
   };
 
+  const activeAlerts = alerts.filter((alert) => !alert.isResolved).length;
+  const diagnosticsCount = sensors.length + Math.max(1, Math.floor(alerts.length / 2));
+
   return (
     <Layout>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold font-display text-foreground">Painel Administrativo</h1>
-          <p className="text-muted-foreground mt-1">Gerenciar cadastros CAR, diagnósticos e relatórios do CERES AI</p>
+          <p className="text-muted-foreground mt-1">Gerenciar diagnósticos CAR, alertas e relatórios do CERES AI com foco em regularização ambiental.</p>
         </div>
         <Button onClick={handleExportSensors}>
           <Download className="w-4 h-4 mr-2" />
@@ -40,23 +45,23 @@ export default function Admin() {
       <div className="grid gap-6 lg:grid-cols-3 mb-8">
         <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">Usuários cadastrados</p>
-          <p className="mt-3 text-3xl font-bold text-foreground">{sensors.length + 12}</p>
-          <p className="mt-2 text-sm text-muted-foreground">Estimativa de usuários e produtores rurais no sistema.</p>
+          <p className="mt-3 text-3xl font-bold text-foreground">{12 + sensors.length}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Perfis de produtores, analistas e gestores em demonstração.</p>
         </div>
         <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">Diagnósticos realizados</p>
-          <p className="mt-3 text-3xl font-bold text-foreground">{sensors.length}</p>
-          <p className="mt-2 text-sm text-muted-foreground">Análises CAR e relatórios gerados no ambiente.</p>
+          <p className="mt-3 text-3xl font-bold text-foreground">{diagnosticsCount}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Diagnósticos CAR e simulações de regularização em andamento.</p>
         </div>
         <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">Alertas ambientais</p>
-          <p className="mt-3 text-3xl font-bold text-foreground">{Math.max(0, sensors.filter(s => s.status !== 'active').length)}</p>
-          <p className="mt-2 text-sm text-muted-foreground">Pendências de conformidade e ações recomendadas.</p>
+          <p className="mt-3 text-3xl font-bold text-foreground">{activeAlerts}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Pendências de conformidade e ações recomendadas para o CAR.</p>
         </div>
       </div>
 
       <div className="bg-card rounded-2xl border border-border/50 p-6 shadow-sm">
-        <h2 className="text-xl font-bold font-display mb-4">Gerenciar Cadastros CAR</h2>
+        <h2 className="text-xl font-bold font-display mb-4">Gerenciar Diagnósticos CAR</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-border/50">

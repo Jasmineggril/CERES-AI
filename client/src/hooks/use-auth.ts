@@ -4,6 +4,9 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const AUTH_STORAGE_KEY = "ceres-auth-session";
 const LOCAL_USERS_STORAGE_KEY = "ceres-local-users";
+const DEMO_EMAIL = "demo@ceres.ai";
+const DEMO_PASSWORD = "Demo123!";
+const DEMO_NAME = "Seu Raimundo";
 
 export interface AuthUser {
   userId: number | string;
@@ -51,10 +54,35 @@ export function clearStoredAuthSession() {
 
 function readLocalUsers(): LocalUserRecord[] {
   const stored = readStorageValue(LOCAL_USERS_STORAGE_KEY);
-  if (!stored) return [];
+  if (!stored) {
+    const seededUsers: LocalUserRecord[] = [
+      {
+        id: 1,
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
+        name: DEMO_NAME,
+      },
+    ];
+    writeLocalUsers(seededUsers);
+    return seededUsers;
+  }
 
   try {
-    return JSON.parse(stored) as LocalUserRecord[];
+    const parsed = JSON.parse(stored) as LocalUserRecord[];
+    if (parsed.length === 0) {
+      const seededUsers: LocalUserRecord[] = [
+        {
+          id: 1,
+          email: DEMO_EMAIL,
+          password: DEMO_PASSWORD,
+          name: DEMO_NAME,
+        },
+      ];
+      writeLocalUsers(seededUsers);
+      return seededUsers;
+    }
+
+    return parsed;
   } catch {
     return [];
   }
@@ -114,6 +142,33 @@ export function authenticateLocally({
     name: existing.name,
     source: "local" as const,
   };
+}
+
+export function changeLocalPassword({
+  email,
+  currentPassword,
+  newPassword,
+}: {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+}) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const users = readLocalUsers();
+  const existing = users.find((user) => user.email.toLowerCase() === normalizedEmail);
+
+  if (!existing || existing.password !== currentPassword) {
+    return { success: false as const, reason: "current-password" as const };
+  }
+
+  const nextUsers = users.map((user) =>
+    user.email.toLowerCase() === normalizedEmail
+      ? { ...user, password: newPassword }
+      : user
+  );
+
+  writeLocalUsers(nextUsers);
+  return { success: true as const };
 }
 
 export function useAuthStatus() {

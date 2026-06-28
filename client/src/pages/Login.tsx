@@ -31,8 +31,8 @@ function getLoginErrorMessage(error: unknown): string {
 }
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@ceres.ai");
+  const [password, setPassword] = useState("Demo123!");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
@@ -237,6 +237,11 @@ export default function Login() {
                 Esqueci minha senha
               </button>
             </div>
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+              <p className="font-semibold">Demonstração rápida</p>
+              <p className="mt-1">Use demo@ceres.ai e Demo123! para testar o fluxo completo do CERES AI.</p>
+            </div>
+
             <button
               type="submit"
               disabled={loading}

@@ -141,7 +141,7 @@ export default function Reports() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold font-display">Relatórios</h1>
-            <p className="text-muted-foreground mt-1">Análise de alertas e eventos do sistema</p>
+            <p className="text-muted-foreground mt-1">Análise de alertas e eventos do sistema para o fluxo de demonstração do CERES AI.</p>
           </div>
         <div className="flex flex-wrap gap-3">
           <Button onClick={handleExportCSV} data-testid="button-export-csv">
@@ -186,6 +186,10 @@ export default function Reports() {
               </select>
             </div>
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+          Relatórios demonstrativos com dados simulados para acompanhar o MVP em apresentação e validação de negócio.
         </div>
 
         {/* Estatísticas */}

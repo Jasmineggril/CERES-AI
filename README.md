@@ -155,6 +155,12 @@ shared/           — Tipos e schemas compartilhados
 
 ## Como Rodar Localmente
 
+### Credenciais de demonstração
+- E-mail: demo@ceres.ai
+- Senha: Demo123!
+
+Essas credenciais foram preparadas para a apresentação do MVP sem necessidade de abrir o código.
+
 ```bash
 # Instalar dependências
 npm install
@@ -174,6 +180,13 @@ npx drizzle-kit push
 ```
 
 ---
+
+## Checklist final de entrega
+- Identidade visual consistente em todas as telas.
+- Fluxo landing page → cadastro → login → dashboard → diagnóstico → mapas → aprender → insights → relatório.
+- Autenticação local e fallback para demonstração.
+- Relatórios exportáveis em CSV e PDF em modo demonstrativo.
+- Dados simulados claramente identificados para apresentação.
 
 ## Roadmap
 

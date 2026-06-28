@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/ui/switch";
-import { useAuthStatus, useLogout } from "@/hooks/use-auth";
+import { useAuthStatus, useLogout, changeLocalPassword } from "@/hooks/use-auth";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "ceres-profile-settings";
@@ -72,6 +72,11 @@ export default function Settings() {
   const [settings, setSettings] = React.useState<SettingsState>(() => createDefaultSettings());
   const [isSaving, setIsSaving] = React.useState(false);
   const [syncMode, setSyncMode] = React.useState<SyncMode>("local");
+  const [passwordForm, setPasswordForm] = React.useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
@@ -226,9 +231,60 @@ export default function Settings() {
   };
 
   const handlePasswordChange = () => {
+    if (!user?.email) {
+      toast({
+        title: "Erro ao alterar senha",
+        description: "Nenhum usuário ativo foi identificado para atualizar a senha.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (user.source !== "local") {
+      toast({
+        title: "Troca de senha",
+        description: "A alteração de senha para contas conectadas ao Supabase será habilitada em uma próxima etapa do MVP.",
+      });
+      return;
+    }
+
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      toast({
+        title: "Dados incompletos",
+        description: "Preencha a senha atual, a nova senha e a confirmação para continuar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast({
+        title: "Senhas diferentes",
+        description: "A nova senha e a confirmação precisam ser iguais.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const result = changeLocalPassword({
+      email: user.email,
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword,
+    });
+
+    if (!result.success) {
+      toast({
+        title: "Senha atual incorreta",
+        description: "A senha atual informada não corresponde à conta local do CERES AI.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     toast({
-      title: "Alteração de senha",
-      description: "A troca de senha será habilitada em breve para o fluxo completo do CERES AI.",
+      title: "Senha atualizada",
+      description: "A senha da conta local foi alterada com sucesso.",
     });
   };
 
@@ -387,7 +443,27 @@ export default function Settings() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 <h2 className="text-xl font-semibold text-foreground">Conta</h2>
               </div>
-              <div className="mt-5 flex flex-col gap-3 md:flex-row">
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <Input
+                  type="password"
+                  placeholder="Senha atual"
+                  value={passwordForm.currentPassword}
+                  onChange={(event) => setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }))}
+                />
+                <Input
+                  type="password"
+                  placeholder="Nova senha"
+                  value={passwordForm.newPassword}
+                  onChange={(event) => setPasswordForm((current) => ({ ...current, newPassword: event.target.value }))}
+                />
+                <Input
+                  type="password"
+                  placeholder="Confirmar senha"
+                  value={passwordForm.confirmPassword}
+                  onChange={(event) => setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                />
+              </div>
+              <div className="mt-4 flex flex-col gap-3 md:flex-row">
                 <Button type="button" variant="outline" onClick={handlePasswordChange}>
                   <Lock className="mr-2 h-4 w-4" /> Alterar senha
                 </Button>
