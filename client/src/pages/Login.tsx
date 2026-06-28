@@ -7,9 +7,6 @@ import { authenticateLocally, writeStoredAuthSession } from "@/hooks/use-auth";
 function getLoginErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
     const message = String((error as { message?: string }).message ?? "");
-    if (message.toLowerCase().includes("email not confirmed") || message.toLowerCase().includes("email_not_confirmed")) {
-      return "Confirme seu e-mail antes de entrar.";
-    }
     if (message.toLowerCase().includes("invalid login credentials") || message.toLowerCase().includes("invalid credentials")) {
       return "E-mail ou senha incorretos.";
     }
@@ -65,9 +62,17 @@ export default function Login() {
 
       const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
+      const rawLoginMessage = String(error?.message ?? "").toLowerCase();
+      const shouldFallbackLocal = rawLoginMessage.includes("email not confirmed") ||
+        rawLoginMessage.includes("email_not_confirmed") ||
+        rawLoginMessage.includes("missing environment variable") ||
+        rawLoginMessage.includes("invalid api key") ||
+        rawLoginMessage.includes("invalid url") ||
+        rawLoginMessage.includes("row-level security") ||
+        rawLoginMessage.includes("rls");
+
       if (error) {
-        const loginError = getLoginErrorMessage(error);
-        if (loginError.includes("Supabase está incompleta") || loginError.includes("bloqueado por uma política de segurança")) {
+        if (shouldFallbackLocal) {
           const localSession = authenticateLocally({ email, password, createIfMissing: false });
           if (localSession) {
             writeStoredAuthSession(localSession);
@@ -76,11 +81,20 @@ export default function Login() {
             return;
           }
         }
-        setError(loginError);
+
+        setError(getLoginErrorMessage(error));
         return;
       }
 
       if (!authData.user) {
+        const localSession = authenticateLocally({ email, password, createIfMissing: false });
+        if (localSession) {
+          writeStoredAuthSession(localSession);
+          setStatusMessage("Login realizado localmente como fallback.");
+          setLocation("/dashboard");
+          return;
+        }
+
         setError("Não foi possível abrir uma sessão válida para este usuário.");
         return;
       }
@@ -90,6 +104,13 @@ export default function Login() {
         email: authData.user.email ?? email,
         name: authData.user.user_metadata?.full_name ?? authData.user.email?.split("@")[0] ?? email,
         source: "server",
+      });
+
+      authenticateLocally({
+        email,
+        password,
+        name: authData.user.user_metadata?.full_name ?? authData.user.email?.split("@")[0] ?? email,
+        createIfMissing: true,
       });
 
       setStatusMessage("Login realizado com sucesso.");

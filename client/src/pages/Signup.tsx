@@ -85,28 +85,38 @@ export default function Signup() {
         },
       });
 
+      const rawSignupMessage = String(authError?.message ?? "").toLowerCase();
+      const shouldFallbackLocal = rawSignupMessage.includes("email rate limit") ||
+        rawSignupMessage.includes("over_email_send_rate_limit") ||
+        rawSignupMessage.includes("missing environment variable") ||
+        rawSignupMessage.includes("invalid api key") ||
+        rawSignupMessage.includes("invalid url") ||
+        rawSignupMessage.includes("row-level security") ||
+        rawSignupMessage.includes("rls");
+
       if (authError) {
-        const signupError = getSignupErrorMessage(authError);
-        if (signupError.includes("limite de envio de e-mail") || signupError.includes("Supabase está incorreta")) {
-          // fallback para modo local quando o Supabase estiver temporariamente indisponível
+        if (shouldFallbackLocal) {
           const localSession = authenticateLocally({
             email: formData.email,
             password: formData.password,
             name: formData.name,
             createIfMissing: true,
           });
+
           if (localSession) {
             writeStoredAuthSession(localSession);
-            setStatusMessage("Cadastro criado localmente pelo fallback. Acesse /login para entrar.");
+            setStatusMessage("Cadastro criado localmente. Você pode entrar sem depender de confirmação por e-mail.");
             setLocation("/dashboard");
             return;
           }
         }
-        setError(signupError);
+
+        setError(getSignupErrorMessage(authError));
         return;
       }
 
-      if (!authData.user) {
+      const signupUser = authData.user ?? authData.session?.user;
+      if (!signupUser) {
         const localSession = authenticateLocally({
           email: formData.email,
           password: formData.password,
@@ -116,9 +126,7 @@ export default function Signup() {
 
         if (localSession) {
           writeStoredAuthSession(localSession);
-          setStatusMessage(
-            "O cadastro foi registrado localmente. Caso o Supabase não permita confirmação por e-mail, use login local ou tente novamente mais tarde."
-          );
+          setStatusMessage("Conta registrada localmente. Você pode entrar sem depender do e-mail de confirmação.");
           setLocation("/dashboard");
           return;
         }
@@ -127,15 +135,22 @@ export default function Signup() {
         return;
       }
 
-      writeStoredAuthSession({
-        userId: authData.user.id,
-        email: authData.user.email ?? formData.email,
-        name: authData.user.user_metadata?.full_name ?? formData.name,
-        source: "server",
+      const localSession = authenticateLocally({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        createIfMissing: true,
       });
 
+      if (!localSession) {
+        setError("Não foi possível criar a conta local.");
+        return;
+      }
+
+      writeStoredAuthSession(localSession);
+
       const { error: profileError } = await supabase.from("profiles").insert({
-        id: authData.user.id,
+        id: signupUser.id,
         email: formData.email,
         name: formData.name,
       });
