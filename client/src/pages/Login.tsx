@@ -68,17 +68,30 @@ export default function Login() {
         console.error("Erro no login:", error);
         const rawMessage = String(error.message ?? "").toLowerCase();
         const isNetworkError = rawMessage.includes("network") || rawMessage.includes("fetch");
+        const isEmailNotConfirmed = rawMessage.includes("email not confirmed") || rawMessage.includes("email_not_confirmed");
+
+        const localSession = authenticateLocally({ email, password, createIfMissing: false });
+        if (localSession) {
+          writeStoredAuthSession(localSession);
+          setStatusMessage(
+            isEmailNotConfirmed
+              ? "Login local realizado. Seu registro Supabase ainda não está aprovado ou seu email não foi confirmado."
+              : "Login realizado em modo local como fallback."
+          );
+          setLocation("/dashboard");
+          return;
+        }
+
         if (isNetworkError) {
-          const localSession = authenticateLocally({ email, password, createIfMissing: false });
-          if (localSession) {
-            writeStoredAuthSession(localSession);
-            setStatusMessage("Login realizado em modo local como fallback.");
-            setLocation("/dashboard");
-            return;
-          }
           setError("Erro de conexão. Tente novamente.");
           return;
         }
+
+        if (isEmailNotConfirmed) {
+          setError("Confirme seu email antes de entrar. Se o email não chegar, use o botão 'Esqueci minha senha'.");
+          return;
+        }
+
         setError(getLoginErrorMessage(error));
         return;
       }

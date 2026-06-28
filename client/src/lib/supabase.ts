@@ -16,5 +16,10 @@ if (!hasSupabaseConfig) {
 export const isSupabaseConfigured = hasSupabaseConfig;
 
 export const supabase = hasSupabaseConfig && supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        detectSessionInUrl: false,
+      },
+    })
   : null;

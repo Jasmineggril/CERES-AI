@@ -136,10 +136,10 @@ export function useAuthStatus() {
             return session;
           }
         } catch {
-          // keep fallback to local session only when Supabase is not available
+          // keep fallback to local session when Supabase session cannot be retrieved
         }
 
-        if (localSession?.source === "local") {
+        if (localSession) {
           return localSession;
         }
 

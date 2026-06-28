@@ -53,6 +53,14 @@ export default function ResetPassword() {
 
       if (resetError) {
         console.error("Erro ao solicitar redefinição de senha:", resetError);
+        const rawMessage = String(resetError.message ?? "").toLowerCase();
+        const isConfigError = rawMessage.includes("missing environment variable") || rawMessage.includes("invalid api key") || rawMessage.includes("invalid url");
+
+        if (isConfigError) {
+          setError("O Supabase não está configurado corretamente. Tente novamente mais tarde ou use o login local.");
+          return;
+        }
+
         setError(getResetErrorMessage(resetError));
         return;
       }

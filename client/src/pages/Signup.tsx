@@ -95,7 +95,27 @@ export default function Signup() {
       });
 
       if (authError) {
-        console.error("Erro no cadastro:", authError);
+        console.error("Erro no cadastro Supabase:", authError);
+        const rawMessage = String(authError.message ?? "").toLowerCase();
+        const isConfigError = rawMessage.includes("missing environment variable") || rawMessage.includes("invalid api key") || rawMessage.includes("invalid url");
+
+        if (isConfigError) {
+          const localSession = authenticateLocally({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+            createIfMissing: true,
+          });
+          if (localSession) {
+            writeStoredAuthSession(localSession);
+            setStatusMessage(
+              "O Supabase não está totalmente disponível. Conta criada localmente e você pode entrar normalmente."
+            );
+            setLocation("/dashboard");
+            return;
+          }
+        }
+
         setError(getSignupErrorMessage(authError));
         return;
       }
@@ -103,6 +123,19 @@ export default function Signup() {
       const signupUser = authData.user ?? authData.session?.user;
       if (!signupUser) {
         console.error("Erro no cadastro: usuário não retornado", authData);
+        const localSession = authenticateLocally({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          createIfMissing: true,
+        });
+        if (localSession) {
+          writeStoredAuthSession(localSession);
+          setStatusMessage("Conta criada localmente, mas não foi possível concluir o cadastro Supabase.");
+          setLocation("/dashboard");
+          return;
+        }
+
         setError("Não foi possível concluir o cadastro. Verifique sua conexão e tente novamente.");
         return;
       }
@@ -132,7 +165,7 @@ export default function Signup() {
         if (localSession) {
           writeStoredAuthSession(localSession);
           setStatusMessage(
-            "Conta criada com sucesso. Acesso local liberado enquanto a confirmação por email é concluída."
+            "Conta criada com sucesso. Se o e-mail de confirmação não chegar, use o login local ou redefinição de senha."
           );
           setLocation("/dashboard");
           return;
